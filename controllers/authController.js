@@ -1,6 +1,6 @@
 const { encrypt, compare } = require("../middlewares/handlePassword")
 const { tokenSign } = require("../middlewares/handlejwt")
-const { registrarUser, readUser, findUserByEmail } = require("../models/userModel")
+const { registrarUser, readUser, findUserByEmail } = require("../models/authModel")
 const bcryptjs = require('bcryptjs')
 const { generarJWT } = require("../middlewares/generate")
 
