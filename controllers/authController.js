@@ -10,7 +10,6 @@ const register = async (req, res) => {
   try {
     req.body.password = await encrypt(req.body.password)    
     const [data] = await registrarUser(req.body);
-    console.log(data);
     const [dataUser] = await readUser(data.insertId);
     
 
@@ -42,7 +41,7 @@ const login = async (req, res) => {
     }
 
     // si esta activo
-    if (usuario[0].rol === "alumno" && usuario[0].status === 0) {
+    if (usuario[0].status === 0) {
       return res.status(400).json({
         msg: 'Usuario deshabilitado - status: false'
       });
@@ -58,6 +57,7 @@ const login = async (req, res) => {
 
     // general ej JWT
     const token = await generarJWT(usuario[0].id_user);
+    delete usuario[0].password;
     res.json({
       msg: "Bienvenido",
       user: usuario[0],
