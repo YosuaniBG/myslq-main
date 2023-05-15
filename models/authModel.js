@@ -6,19 +6,14 @@ const registrarUser = ({username, fullname, email, password, rol}) =>{
     [username, fullname, email, password, rol]);
 };
 
-//Consulta para LEER un usuario
-const readUser = (id) => {
-    return db.query('SELECT * FROM users WHERE id_user = ?', [id]);
-}
 
 //Consulta para BUSCAR un usuario por email
-const findUserByEmail = (email) => {
+const getUserByEmail = (email) => {
     return db.query('SELECT * FROM users WHERE email = ?', [email]);
 }
 
 
 module.exports = {
     registrarUser,
-    readUser,
-    findUserByEmail
+    getUserByEmail
 }

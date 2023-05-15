@@ -1,14 +1,14 @@
-const { getOneUser, getUsers, createAdmin, updateAdmin, updateUserStatus } = require("../models/userModel");
-const { readUser } = require("../models/authModel");
+const { encrypt } = require("../middlewares/handlePassword");
+const { getUsers, createAdmin, updateAdmin, updateUserStatus, getUserById } = require("../models/userModel");
 
 const getOneAdmin = async (req, res) => {
   try {
-    const [data] = await getOneUser(req.params.id);
+    const [data] = await getUserById(req.params.id);
 
     if (!data[0]) {
       return res.status(400).json({
         msg: "El usuario no existe",
-      });
+      });   //TODO incluir este codigo en todos
     }
 
     if (data[0].rol !== "administrador") {
@@ -44,8 +44,9 @@ const getAllUsersByRole = async (req, res, rol) => {
 
 const newAdmin = async (req, res) => {
   try {
+    req.body.password = await encrypt(req.body.password) 
     const [data] = await createAdmin(req.body);
-    const [dataUser] = await readUser(data.insertId);
+    const [dataUser] = await getUserById(data.insertId);
 
     res.send({
       user: dataUser[0]
@@ -76,7 +77,7 @@ const updateAdminData = async (req, res) => {
 const switchStatus = async (req, res, rol) => {
   try {
     let status = 0;
-    const [dataUser] = await readUser(req.params.id);
+    const [dataUser] = await getUserById(req.params.id);
    
     if(dataUser[0].status == 0){
       status = 1;

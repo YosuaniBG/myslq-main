@@ -1,8 +1,9 @@
 const { encrypt, compare } = require("../middlewares/handlePassword")
 const { tokenSign } = require("../middlewares/handlejwt")
-const { registrarUser, readUser, findUserByEmail } = require("../models/authModel")
+const { registrarUser, getUserByEmail } = require("../models/authModel")
 const bcryptjs = require('bcryptjs')
 const { generarJWT } = require("../middlewares/generate")
+const { getUserById } = require("../models/userModel")
 
 
 // Registrar un usuario
@@ -10,8 +11,7 @@ const register = async (req, res) => {
   try {
     req.body.password = await encrypt(req.body.password)    
     const [data] = await registrarUser(req.body);
-    const [dataUser] = await readUser(data.insertId);
-    
+    const [dataUser] = await getUserById(data.insertId); //TODO mantener la consistencia en todas estas variables, usar una mas general
 
     res.send({
       token: await tokenSign(dataUser[0]),
@@ -32,7 +32,7 @@ const login = async (req, res) => {
   const { email, password } = req.body
   try {
     // verificar si el email existe
-    const [usuario] = await findUserByEmail(email)
+    const [usuario] = await getUserByEmail(email)
 
     if (!usuario[0]) {
       return res.status(400).json({
@@ -46,7 +46,7 @@ const login = async (req, res) => {
         msg: 'Usuario deshabilitado - status: false'
       });
     }
-    
+
     // verificar la contraseña
     const validPassword = bcryptjs.compareSync(password, usuario[0].password);
     if (!validPassword) {

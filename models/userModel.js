@@ -1,7 +1,7 @@
 const db = require('../dbConfig').promise();
 
 //Consulta para obtner lista de usuarios
-const getOneUser = (id) => {
+const getUserById = (id) => {
     return db.query('SELECT * FROM users WHERE id_user = ?', [id]);
 }
 
@@ -28,14 +28,30 @@ const updateUserStatus = (id,rol,status) => {
     [status, rol, id]);
 }
 
+const getAllMyTeachers = (id) => {
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND ts.status = 1;', [id]);
+}
+
+const getTeachersAvailables = () => {
+    return db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1;");
+}
+
+const getMessages = (id_teacher, id_student) => {
+    return db.query("SELECT * FROM messages WHERE id_teacher = ? AND id_student = ?;", [id_teacher, id_student]);
+}
+
+
 
 
 
 
 module.exports = {
     getUsers,
-    getOneUser,
+    getUserById,
     createAdmin,
     updateAdmin,
-    updateUserStatus
+    updateUserStatus,
+    getAllMyTeachers,
+    getTeachersAvailables,
+    getMessages
 }
