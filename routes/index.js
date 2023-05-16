@@ -13,7 +13,7 @@ fs.readdirSync(PATH_ROUTES).filter((file) => {
   const name = removeExtension(file)
   if (name !== 'index') {
     console.log(`Cargando ruta: ${name}`)
-    router.use(`/${name}`, require(`./${file}`)) //TODO http://localhost:3000/api/tracks
+    router.use(`/${name}`, require(`./${file}`))
   }
 })
 

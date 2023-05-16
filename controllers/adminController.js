@@ -1,5 +1,5 @@
 const { encrypt } = require("../middlewares/handlePassword");
-const { getUsers, createAdmin, updateAdmin, updateUserStatus, getUserById } = require("../models/userModel");
+const { getUsers, updateAdmin, updateUserStatus, getUserById, insertAdmin } = require("../models/userModel");
 
 const getOneAdmin = async (req, res) => {
   try {
@@ -8,7 +8,7 @@ const getOneAdmin = async (req, res) => {
     if (!data[0]) {
       return res.status(400).json({
         msg: "El usuario no existe",
-      });   //TODO incluir este codigo en todos
+      });  
     }
 
     if (data[0].rol !== "administrador") {
@@ -45,7 +45,7 @@ const getAllUsersByRole = async (req, res, rol) => {
 const newAdmin = async (req, res) => {
   try {
     req.body.password = await encrypt(req.body.password) 
-    const [data] = await createAdmin(req.body);
+    const [data] = await insertAdmin(req.body);
     const [dataUser] = await getUserById(data.insertId);
 
     res.send({
