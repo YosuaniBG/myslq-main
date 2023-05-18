@@ -30,6 +30,7 @@ router.patch("/teachers/:id", (req, res) => {switchStatus(req, res, "profesor");
                      
 router.patch("/students/:id", (req, res) => {switchStatus(req, res, "alumno");});                   //Actualizar el STATUS de un estudiante específico:
    
-
+//TODO - Crear Filtros para estudiantes y profesores, ya sea por ACTIVOS o en el caso de los profesores los que esten solicitando inscripcion
+//TODO - Crear Filtro combinado con parametros de consulta
 
 module.exports = router;
