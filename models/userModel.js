@@ -90,6 +90,41 @@ const updatePassword = (id, password) => {
     [password, id]);
 }
 
+const filter = (array, subject) => {
+    let result = [];
+    for (let elem of array){
+        let include = JSON.parse(elem.subjects).includes(subject)
+       
+        if(include){
+            result.push(elem);
+        }       
+    }
+    return result;
+}
+
+const teachersBySubject = async (subject) => {
+    const [teachers] = await db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1");
+   
+    return filter(teachers, subject);
+}
+
+const teachersByPrice = (min, max) => {
+    return db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1 AND price >= ? AND price <= ?", 
+    [min, max]);
+}
+
+const teachersByExperience = (experience) => {
+    return db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1 AND experience = ?", 
+    [experience]);
+}
+
+const teachersBy = async (subject, min_price=0, max_price, experience) => {
+    const [teachers] = await db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1 AND price >= ? AND price <= ? AND experience = ?", 
+    [min_price, max_price, experience]);
+
+    return filter(teachers,subject);
+}
+
 
 module.exports = {
     getUsers,
@@ -110,6 +145,9 @@ module.exports = {
     insertRelationship,
     updateRelationship,
     getRelationship,
-    activeRelationship
-    
+    activeRelationship,
+    teachersBySubject,
+    teachersByPrice,
+    teachersByExperience,
+    teachersBy
 }

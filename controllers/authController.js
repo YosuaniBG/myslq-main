@@ -13,12 +13,12 @@ const register = async (req, res) => {
     const [data] = await registrarUser(req.body);
     const [dataUser] = await getUserById(data.insertId); //TODO mantener la consistencia en todas estas variables, usar una mas general
 
-    res.send({
+    res.status(200).send({
       token: await tokenSign(dataUser[0]),
       user: dataUser[0]
     })
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     });
   }
@@ -35,14 +35,14 @@ const login = async (req, res) => {
     const [usuario] = await getUserByEmail(email)
 
     if (!usuario[0]) {
-      return res.status(400).json({
+      return res.status(404).json({
         msg: 'Usuario / Password no son correctos'
       });
     }
 
     // si esta activo
     if (usuario[0].status === 0) {
-      return res.status(400).json({
+      return res.status(404).json({
         msg: 'Usuario deshabilitado - status: false'
       });
     }
@@ -50,7 +50,7 @@ const login = async (req, res) => {
     // verificar la contraseña
     const validPassword = bcryptjs.compareSync(password, usuario[0].password);
     if (!validPassword) {
-      return res.status(400).json({
+      return res.status(404).json({
         msg: 'Usuario / Password no son correctos - password'
       });
     }
@@ -58,13 +58,13 @@ const login = async (req, res) => {
     // general ej JWT
     const token = await generarJWT(usuario[0].id_user);
     delete usuario[0].password;
-    res.json({
+    res.status(200).json({
       msg: "Bienvenido",
       user: usuario[0],
       token
     })
   } catch (error) {
-    res.json({fatal: error.message});
+    res.status(500).json({fatal: error.message});
   }
 
 }
