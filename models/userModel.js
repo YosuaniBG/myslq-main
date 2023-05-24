@@ -1,4 +1,4 @@
-const db = require('../dbConfig').promise();
+const db = require('../database/dbConfig').promise();
 
 //Consulta para obtner lista de usuarios
 const getUserById = (id) => {

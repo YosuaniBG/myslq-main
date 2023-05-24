@@ -47,6 +47,6 @@ router.post("/teachers/:id/contact", contactTeacher); // Esta ruta va a establec
 
 router.patch("/teachers/:id/comments", ratingAndCommenting); //Actualiza la Puntuacion y los comentarios que hace un estudiante a un profesor siempre y cuando la relacion este formalizada
 
-
+//TODO -Usar el usuario logeado en este caso el estuudiante para ello en el middleware tenemos que guardar el usuario en req.user IMPORTANTE
 
 module.exports = router;

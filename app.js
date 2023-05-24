@@ -1,26 +1,8 @@
-const express = require('express');
-require('dotenv').config()
-const cors = require("cors");
-
-const app = express();
-
-app.use(cors());
-
-// middlewares
-app.use(express.static("public"))
-app.use(express.json());
+require('dotenv').config();
+const Server = require('./server/server');
 
 
-// main routes
-app.use("/api/v1", require("./routes"));
-
-const port = process.env.PORT || 3001;
-
-// =======Ruta de docs=====//
-
-app.listen(port, () => {
+const server = new Server();
 
 
-  console.log(`listening on http://localhost:${port}`)
-});
-
+server.listen();

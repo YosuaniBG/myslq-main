@@ -1,4 +1,4 @@
-const db = require('../dbConfig').promise();
+const db = require('../database/dbConfig').promise();
 
 //Consulta para AÑADIR un usuario
 const registrarUser = ({username, fullname, email, password, rol}) =>{

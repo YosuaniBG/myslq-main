@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/admins/:id", getOneAdmin);           //Obtener información de un administrador específico:
 
 router.get("/admins", (req, res) => {getAllUsersByRole(req, res, "administrador");});         //Obtener todos los administradores:
-  
+
 router.get("/teachers", (req, res) => {getAllUsersByRole(req, res, "profesor");});            //Obtener todos los profesores:
  
 router.get("/students", (req, res) => {getAllUsersByRole(req, res, "alumno");});              //Obtener todos los estudiantes:

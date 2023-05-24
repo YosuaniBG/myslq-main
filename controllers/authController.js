@@ -36,7 +36,7 @@ const login = async (req, res) => {
 
     if (!usuario[0]) {
       return res.status(404).json({
-        msg: 'Usuario / Password no son correctos'
+        msg: 'Email / Password no son correctos'
       });
     }
 
@@ -59,7 +59,7 @@ const login = async (req, res) => {
     const token = await generarJWT(usuario[0].id_user);
     delete usuario[0].password;
     res.status(200).json({
-      msg: "Bienvenido",
+      msg: `Bienvenido ${usuario[0].fullname}`,
       user: usuario[0],
       token
     })

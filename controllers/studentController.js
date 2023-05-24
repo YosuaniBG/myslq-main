@@ -319,7 +319,6 @@ const filterCombined = async (req, res) => {
   }
 };
 
-//TODO - Crear metodos que permitan obtener Filtros de profesores, ya sea por Materias, Experiencia, Puntos, Precio/hora
 
 module.exports = {
   studentDashboard,
