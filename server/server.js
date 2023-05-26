@@ -48,8 +48,9 @@ class Server {
         this.app.use( this.paths.teacher, checkToken, checkRole('profesor'), require('../routes/teacher'));
         this.app.use( (req, res, next) => {
             res.status(404).json({
-                msg: 'Ruta no encontrada...'
-            })
+                msg: "Ruta no encontrada...",
+                availableRoutes: ["api/auth","api/admin","api/teacher","api/student"]
+            }, null, 2)
         });
 
     }
