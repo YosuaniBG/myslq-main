@@ -13,7 +13,8 @@ const {
   teachersBySubject,
   teachersByPrice,
   teachersByExperience,
-  teachersBy
+  teachersBy,
+  getMyTeacher
 } = require("../models/userModel");
 
 const studentDashboard = async (req, res) => {
@@ -65,12 +66,12 @@ const myTeacher = async (req, res) => {
   try {
     const id_student = req.user.id_user;
     const id_teacher = req.params.id;
-    const [teacher] = await getTeacherById(id_teacher);
+    const [teacher] = await getMyTeacher(id_student, id_teacher);
     const [chat] = await getMessages(id_teacher, id_student);
 
     if (!teacher[0]) {
       return res.status(404).json({
-        msg: "Este alumno no tiene profesores con este Id",
+        msg: "El usuario con este id no está reconocido como uno de mis profesores",
       });
     }
 
@@ -115,14 +116,22 @@ const sendMessage = (sender) => {
       const receiver_user = req.params.id;
       const message = req.body.message;
   
-      const [student] = await getStudentById(sender_user);
       const [teacher] = await getTeacherById(receiver_user);
   
-      if (!student[0] || !teacher[0]) {
+      if (!teacher[0]) {
         return res.status(404).send({
           msg: "No es posible establecer comunicación entre estos dos usuarios",
         });
       }
+
+      const [userData] = await getRelationship(receiver_user, sender_user);
+
+      if (userData[0].status === 0) {
+        return res.status(404).json({
+          msg: "Esta relacion Alumno - Profesor no está activa",
+        });
+      }
+
       const [chat] = await insertMessage(sender_user, receiver_user, sender, message);
   
       res.send({
@@ -158,10 +167,9 @@ const contactTeacher = async (req, res) => {
   try {
     const id_student = req.user.id_user;
     const id_teacher = req.params.id;
-    const [student] = await getStudentById(id_student);
     const [teacher] = await getTeacherById(id_teacher);
 
-    if (!student[0] || !teacher[0]) {
+    if (!teacher[0]) {
       return res.status(404).send({
         msg: "No es posible establecer la relacion entre estos usuarios",
       });
@@ -188,6 +196,14 @@ const ratingAndCommenting = async (req, res) => {
     const id_teacher = req.params.id;
     const comment = req.body.comment;
     const score = req.body.score;
+
+    const [teacher] = await getTeacherById(id_teacher);
+
+    if (!teacher[0]) {
+      return res.status(404).send({
+        msg: "No es posible establecer la relacion entre estos usuarios",
+      });
+    }
 
     const [userData] = await getRelationship(id_teacher, id_student);
 
@@ -294,7 +310,7 @@ const filterCombined = async (req, res) => {
     const { subject, min_price, max_price, experience } = req.query;
     const data = await teachersBy(subject, min_price, max_price, experience);
 
-    if(!data){
+    if(!data[0]){
       return res.status(404).send({
         msg: `No se encontro ningún profesor que cumpla con estas condiciones`
       });

@@ -72,7 +72,12 @@ const getAllMyStudents = (id) => {
 }
 
 const getMyStudent = (id_teacher, id_student) => {
-    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_student = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_student = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1', [id_teacher, id_student]);
+}
+
+
+const getMyTeacher = (id_student, id_teacher) => {
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1', [id_teacher, id_student]);
 }
 
 const getTeachersAvailables = () => {
@@ -132,8 +137,10 @@ module.exports = {
     getAllMyTeachers,
     getAllMyStudents,
     getMyStudent,
+    getMyTeacher,
     getTeachersAvailables,
     getMessages,
+    getRelationship,
     insertAdmin,
     insertMessage,
     updateAdmin,
@@ -143,7 +150,6 @@ module.exports = {
     updatePassword,
     insertRelationship,
     updateRelationship,
-    getRelationship,
     activeRelationship,
     teachersBySubject,
     teachersByPrice,

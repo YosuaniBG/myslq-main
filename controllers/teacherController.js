@@ -7,6 +7,7 @@ const {
   updateTeacher,
   getMyStudent,
   insertMessage,
+  getRelationship,
 } = require("../models/userModel");
 
 const teacherDashboard = async (req, res) => {
@@ -61,13 +62,21 @@ const sendMessage = (sender) => {
       const message = req.body.message;
 
       const [student] = await getStudentById(receiver_user);
-      const [teacher] = await getTeacherById(sender_user);
 
-      if (!student[0] || !teacher[0]) {
+      if (!student[0]) {
         return res.status(404).send({
           msg: "No es posible establecer comunicación entre estos dos usuarios",
         });
       }
+
+      const [userData] = await getRelationship(sender_user, receiver_user);
+
+      if (userData[0].status === 0) {
+        return res.status(404).json({
+          msg: "Esta relacion Alumno - Profesor no está activa",
+        });
+      }
+
       const [chat] = await insertMessage(
         sender_user,
         receiver_user,
