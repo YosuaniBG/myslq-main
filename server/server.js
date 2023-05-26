@@ -46,6 +46,11 @@ class Server {
         this.app.use( this.paths.admin, checkToken, checkRole('administrador'), require('../routes/admin'));
         this.app.use( this.paths.student, checkToken, checkRole('alumno'), require('../routes/student'));
         this.app.use( this.paths.teacher, checkToken, checkRole('profesor'), require('../routes/teacher'));
+        this.app.use( (req, res, next) => {
+            res.status(404).json({
+                msg: 'Ruta no encontrada...'
+            })
+        });
 
     }
 
