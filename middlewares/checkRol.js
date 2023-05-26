@@ -1,10 +1,11 @@
 
+// Middleware para chequear que el usuario que esta accediendo tenga el rol adecuado
 const checkRole = (role) => {
     return ( req, res , next ) => {
 
         if ( !req.user ) {
             return res.status(500).json({
-                msg: 'Peligro: Se esta intentando acceder un autorización'
+                msg: 'Peligro: Se esta intentando acceder sin autorización'
             });
         }
         

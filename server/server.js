@@ -39,18 +39,13 @@ class Server {
 
     }
 
+    //Definición de rutas principales de la API
     routes() {
 
         this.app.use( this.paths.auth, require('../routes/auth'));
         this.app.use( this.paths.admin, checkToken, checkRole('administrador'), require('../routes/admin'));
         this.app.use( this.paths.student, checkToken, checkRole('alumno'), require('../routes/student'));
         this.app.use( this.paths.teacher, checkToken, checkRole('profesor'), require('../routes/teacher'));
-
-        /**
-         * Nota: TODO: middlewares basado en roles
-         * Hacer cambios a la hora de hacer el Payload del Token incluyendo datos relaventes como el Id_user y rol_user - Middleware handlejwt
-         * revisr el Middleware para chequear el rol y modificarlo para que se analicen el role segun le pase parametro 
-         */
 
     }
 

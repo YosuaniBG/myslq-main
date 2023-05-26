@@ -2,17 +2,18 @@ const { filterSubject } = require('../utility/helpers');
 
 const db = require('../database/dbConfig').promise();
 
-//Consulta para obtner lista de usuarios
+/*----------------------------- Consultas SQL ---------------------------------------------- */
+
 const getUserById = (id) => {
     return db.query('SELECT * FROM users WHERE id_user = ?', [id]);
 }
 
 const getTeacherById = (id) => {
-    return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'profesor'", [id]);
+    return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'profesor' AND status = 1 AND active = 1", [id]);
 }
 
 const getStudentById = (id) => {
-    return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'alumno'", [id]);
+    return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'alumno' AND status = 1", [id]);
 }
 
 const getUsers = (rol = "") => {
@@ -29,7 +30,7 @@ const insertAdmin = ({username, fullname, email, password}) => {
 }
 
 const updateAdmin = (id, {username, fullname, email}) => {
-    return db.query('UPDATE users SET username = ?, fullname = ?, email = ? WHERE id_user = ?', 
+    return db.query("UPDATE users SET username = ?, fullname = ?, email = ? WHERE id_user = ? AND rol = 'administrador'", 
     [username, fullname, email, id]);
 }
 
@@ -64,7 +65,7 @@ const getRelationship = (id_teacher, id_student) => {
 }
 
 const getAllMyTeachers = (id) => {
-    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND ts.status = 1', [id]);
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND ts.status = 1 AND u.status = 1', [id]);
 }
 
 const getAllMyStudents = (id) => {
@@ -75,9 +76,8 @@ const getMyStudent = (id_teacher, id_student) => {
     return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_student = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1', [id_teacher, id_student]);
 }
 
-
 const getMyTeacher = (id_student, id_teacher) => {
-    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1', [id_teacher, id_student]);
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1 AND u.status = 1', [id_teacher, id_student]);
 }
 
 const getTeachersAvailables = () => {
@@ -141,19 +141,21 @@ module.exports = {
     getTeachersAvailables,
     getMessages,
     getRelationship,
+    teachersBySubject,
+    teachersByPrice,
+    teachersByExperience,
+    teachersBy,
+
     insertAdmin,
     insertMessage,
+    insertRelationship,
+
     updateAdmin,
     updateStudent,
     updateTeacher,
     updateUserStatus,
     updatePassword,
-    insertRelationship,
     updateRelationship,
     activeRelationship,
-    teachersBySubject,
-    teachersByPrice,
-    teachersByExperience,
-    teachersBy,
     admission
 }

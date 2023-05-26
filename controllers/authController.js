@@ -4,13 +4,17 @@ const { generateToken } = require("../utility/helpers")
 const { getUserById } = require("../models/userModel")
 
 
-// Registrar un usuario
+// Manejador de la ruta Registrar 
 const register = async (req, res) => {
   try {
+    // Encripta el password que manda el usuario 
     req.body.password = bcryptjs.hashSync(req.body.password, 10); 
-    const [data] = await registrarUser(req.body);
-    const [user] = await getUserById(data.insertId); //TODO mantener la consistencia en todas estas variables, usar una mas general
 
+    // Registra sus datos en la BD y luego se obtienen el usuario a partir del id que se le asigna
+    const [data] = await registrarUser(req.body);
+    const [user] = await getUserById(data.insertId); 
+
+    // Muestra un mensaje SUCCESSFUL y genera un Token para este usuario
     res.status(200).send({
       msg: 'Su registro ha sido satisfactorio',
       token: generateToken(user[0])
@@ -23,7 +27,7 @@ const register = async (req, res) => {
 }
 
 
-// login de un usuario
+// Manejador de la ruta Login
 const login = async (req, res) => {
   const { email, password } = req.body
   try {
@@ -51,7 +55,7 @@ const login = async (req, res) => {
       });
     }
 
-    // Generar el Token si todo va bien
+    // Muestra mensaje de BIENVENIDA y Genera el Token si todo va bien
     res.status(200).json({
       msg: `Bienvenido/a ${user[0].fullname}`,
       token: generateToken(user[0])

@@ -6,6 +6,7 @@ const { validarCampos } = require('../validators/validateField');
 
 const router = express.Router()
 
+//Ruta para el registro de un usuario (Profesor o Estudiante)
 router.post("/register",[
   body("username")
     .notEmpty().withMessage("Debe incluir el Username"),
@@ -22,6 +23,7 @@ router.post("/register",[
     .notEmpty().withMessage("Debe definir el rol")
 ], validarCampos, register );
 
+// Ruta para el proceso de login de un usuario (Adminstrador, Profesor o Estudiante)
 router.post("/login",[
   body("email")
     .isEmail()

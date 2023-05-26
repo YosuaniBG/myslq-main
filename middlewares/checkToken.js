@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../models/userModel');
 
+// Middleware para chequear que el ususario que accede tenga un token válido
 const checkToken = async (req, res, next) => {
 
     if(!req.headers['authorization']){

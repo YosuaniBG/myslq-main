@@ -17,21 +17,21 @@ const {
   getMyTeacher
 } = require("../models/userModel");
 
+// Manejador para obtener los datos del usuario registrado y sus profesores
 const studentDashboard = async (req, res) => {
   try {
-    const id_student = req.user.id_user;
-    const [user] = await getStudentById(id_student);
-    const [teachers] = await getAllMyTeachers(id_student);
+    const [teachers] = await getAllMyTeachers(req.user.id_user);
 
-    if (!user[0]) {
-      return res.status(404).json({
-        msg: "No existe ningún estudiante con este id",
-      });
-    }
+    let info;
+
+    // Verifica si la consulta devuelve un listado de profesores del estudiante loggeado
+    !teachers[0]
+      ? (info = "Aún no tiene profesores contratados")
+      : (info = teachers);
 
     res.send({
-      user,
-      teachers,
+      student: req.user,
+      teachers: info,
     });
 
   } catch (error) {
@@ -41,10 +41,12 @@ const studentDashboard = async (req, res) => {
   }
 };
 
+// Manejador que muestra un listado de todos los profesores HABILITADOS en la BD
 const teachersAvailables = async (req, res) => {
   try {
     const [teachers] = await getTeachersAvailables();
 
+    //Verifica si la lista de profesores esta vacia o no
     if(!teachers[0]){
       return res.status(404).json({
         msg: "No hay profesores disponibles",
@@ -62,6 +64,7 @@ const teachersAvailables = async (req, res) => {
   }
 };
 
+// Manejador para obtener todos los datos de un profesor contratado por el estudiante registrado
 const myTeacher = async (req, res) => {
   try {
     const id_student = req.user.id_user;
@@ -87,11 +90,13 @@ const myTeacher = async (req, res) => {
   }
 };
 
+// Manejador que muestra los datos de un profesor registrado en el sistema que este ACTIVO 
 const teacherInfo = async (req, res) => {
   try {
     const id_teacher = req.params.id;
     const [teacher] = await getTeacherById(id_teacher);
 
+    //Verifica si el identificador dado corresponde a un profesor
     if (!teacher[0]) {
       return res.status(404).json({
         msg: "No existe ningún profesor con este id",
@@ -109,6 +114,7 @@ const teacherInfo = async (req, res) => {
   }
 };
 
+// Manejador para enviar mensajes a un profesor que este previamente contratado con el estudiante loggeado 
 const sendMessage = (sender) => {
   return async (req, res) => {
     try {
@@ -118,6 +124,7 @@ const sendMessage = (sender) => {
   
       const [teacher] = await getTeacherById(receiver_user);
   
+       //Verifica que el id proporcionado corresponda a un profesor
       if (!teacher[0]) {
         return res.status(404).send({
           msg: "No es posible establecer comunicación entre estos dos usuarios",
@@ -126,6 +133,14 @@ const sendMessage = (sender) => {
 
       const [userData] = await getRelationship(receiver_user, sender_user);
 
+      //Verifica que la relacion entre estos dos ususario EXISTA
+      if(!userData[0]){
+        return res.status(404).json({
+          msg: "Esta relacion Alumno - Profesor no existe",
+        });
+      }
+
+      //Verifica que la relación existente este ACTIVA
       if (userData[0].status === 0) {
         return res.status(404).json({
           msg: "Esta relacion Alumno - Profesor no está activa",
@@ -147,6 +162,7 @@ const sendMessage = (sender) => {
   };
 }
 
+// Manejador para atualizar los datos del estudiante
 const updateStudentInfo = async (req, res) => {
   try {
     const [data] = await updateStudent(req.user.id_user, req.body);
@@ -163,15 +179,17 @@ const updateStudentInfo = async (req, res) => {
   }
 };
 
+// Manejador para iniciar la relacion Alumno - profesor al establecer contacto con el profesor
 const contactTeacher = async (req, res) => {
   try {
     const id_student = req.user.id_user;
     const id_teacher = req.params.id;
     const [teacher] = await getTeacherById(id_teacher);
 
+    //Verifica si el id corresponde a un profesor ACTIVO o no
     if (!teacher[0]) {
       return res.status(404).send({
-        msg: "No es posible establecer la relacion entre estos usuarios",
+        msg: "No es posible establecer la relacion con este usuario",
       });
     }
 
@@ -190,6 +208,7 @@ const contactTeacher = async (req, res) => {
   }
 };
 
+// Manejador para actualizar una puntuacion y un comentario a uno de los profesores del estudiante loggeado
 const ratingAndCommenting = async (req, res) => {
   try {
     const id_student = req.user.id_user;
@@ -199,37 +218,36 @@ const ratingAndCommenting = async (req, res) => {
 
     const [teacher] = await getTeacherById(id_teacher);
 
+    //Verifica que el usuario sea un profesor ACTIVO o no
     if (!teacher[0]) {
       return res.status(404).send({
-        msg: "No es posible establecer la relacion entre estos usuarios",
+        msg: "Este usuario no es compatible",
       });
     }
 
     const [userData] = await getRelationship(id_teacher, id_student);
 
+    //Verifica que exista una relacion Alumno - profesor previa entre estos usuarios
     if (!userData[0]) {
       return res.status(404).json({
         msg: "Esta relacion Alumno - Profesor no existe",
       });
     }
 
-    const [data] = await updateRelationship(
-      id_teacher,
-      id_student,
-      score,
-      comment
-    );
-
-    if (userData[0].status == 0) {
-      res.status(404).send({
+    //Verifica que la relación existente este ACTIVA
+    if (userData[0].status === 0) {
+      return res.status(404).json({
         msg: "La comunicación con este profesor aun no ha sido aprobada",
       });
-    } else {
-      res.send({
-        msg: 'Su información ha sido enviada',
-        comment: data,
-      });
     }
+
+    const [data] = await updateRelationship(id_teacher, id_student, score, comment);
+
+    res.send({
+      msg: 'Su información ha sido enviada',
+      comment: data,
+    });
+
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -237,7 +255,7 @@ const ratingAndCommenting = async (req, res) => {
   }
 };
 
-
+// Manejador para filtar una lista de profesores por materia
 const filterBySubject = async (req, res) => {
   try {
     const { subject } = req.query;
@@ -261,6 +279,7 @@ const filterBySubject = async (req, res) => {
   }
 };
 
+// Manejador para filtar una lista de profesores por precio
 const filterByPrice = async (req, res) => {
   try {
     const { min_price, max_price } = req.query;
@@ -283,6 +302,7 @@ const filterByPrice = async (req, res) => {
   }
 };
 
+// Manejador para filtar una lista de profesores por experiencia
 const filterByExperience = async (req, res) => {
   try {
     const { experience } = req.query;
@@ -305,6 +325,7 @@ const filterByExperience = async (req, res) => {
   }
 };
 
+// Manejador para filtar una lista de profesores por materia, precio y experiencia
 const filterCombined = async (req, res) => {
   try {
     const { subject, min_price, max_price, experience } = req.query;

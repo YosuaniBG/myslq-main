@@ -19,37 +19,40 @@ const { body } = require("express-validator");
 
 const router = express.Router();
 
-//Devuelve un objeto con los datos del estudiantes y ademas una lista de sus profesores
+/*-------------------------------- Rutas para estudiantes -------------------------------------------------*/
+
+// Ruta que Devuelve un objeto con los datos del estudiantes y ademas una lista de sus profesores
 router.get("/dashboard", studentDashboard); 
 
-//Devuelve un  OBJETO con los datos de un profesor y una lista con sus conversaciones
+// Ruta que Devuelve un  OBJETO con los datos de un profesor y una lista con sus conversaciones
 router.get("/dashboard/teachers/:id", myTeacher); 
 
-//Devuelve un listado de profesores ACTIVOS
+// Ruta que Devuelve un listado de profesores ACTIVOS
 router.get("/teachers", teachersAvailables); 
 
-//GET api/student/teachers/filterBySubject?subject=matematicas
+// Ruta que ejecuta un filtro para los profesores por materia api/student/teachers/filterBySubject?subject=matematicas
 router.get("/teachers/filterBySubject", filterBySubject);
 
-//GET api/student/teachers/filterByPrice?min_price=50&max_price=100
+// Ruta que ejecuta un filtro para los profesores por precio api/student/teachers/filterByPrice?min_price=50&max_price=100
 router.get("/teachers/filterByPrice", filterByPrice);
 
-//GET api/student/teachers/filterByExperience?experience=5
+// Ruta que ejecuta un filtro para los profesores por experiencia api/student/teachers/filterByExperience?experience=5
 router.get("/teachers/filterByExperience", filterByExperience);
 
-//GET api/student/teachers/filterCombined?teachers?subject=ingles&min_price=50&years_of_experience=3
+// Ruta que ejecuta un filtro combinado para los profesores por materia, precio y experiencia
+// api/student/teachers/filterCombined?teachers?subject=ingles&min_price=50&years_of_experience=3
 router.get("/teachers/filterCombined", filterCombined);
 
-//Devuelve TODA la informacion de un profesor
+// Ruta que Devuelve TODA la informacion de un profesor
 router.get("/teachers/:id", teacherInfo); 
 
-//Envia un mensaje al Profesor
+// Ruta que Envia un mensaje al Profesor
 router.post("/dashboard/teachers/:id/message", sendMessage("alumno")); 
 
- // Esta ruta va a establecer la relacion inicil entre un estudiante y un profesor
+ // Ruta para establecer la relacion inicil entre un estudiante y un profesor
  router.post("/teachers/:id/contact", contactTeacher);
 
-// Actualizar datos de un Alumno
+// Ruta para Actualizar datos de un Alumno
 router.put("/change_profile", [
   body("username")
     .notEmpty().withMessage("Debe incluir el Username"),
@@ -61,7 +64,7 @@ router.put("/change_profile", [
     .optional().isString().withMessage("Debe incluir una imagen de perfil a traves de un URL")
   ], validarCampos, updateStudentInfo); 
 
-// gestionar Contraseña
+// Ruta para gestionar Contraseña
 router.patch("/change_password",[
   body("password")
     .notEmpty()
@@ -75,7 +78,7 @@ router.patch("/change_password",[
 ],
 validarCampos, managePassword); 
 
-//Actualiza la Puntuacion y los comentarios que hace un estudiante a un profesor siempre y cuando la relacion este formalizada
+// Ruta para Actualizar la Puntuacion y los comentarios que hace un estudiante a un profesor siempre y cuando la relacion este formalizada
 router.patch("/teachers/:id/comments", [
   body("score")
     .notEmpty().withMessage("Debe incluir el Username")

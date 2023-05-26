@@ -12,18 +12,18 @@ const { body } = require("express-validator");
 
 const router = express.Router();
 
-// Rutas para profesor
+/*-------------------------------- Rutas para profesor -------------------------------------------------*/
 
-//Devuelve un objeto con los datos del Profesor y ademas una lista de sus estudiantes
+// Ruta que Devuelve un objeto con los datos del Profesor y ademas una lista de sus estudiantes
 router.get("/dashboard", teacherDashboard);
 
-//Devuelve un  OBJETO con los datos de un Estudiante y una lista con sus conversaciones
+// Ruta que Devuelve un  OBJETO con los datos de un Estudiante y una lista con sus conversaciones
 router.get("/dashboard/students/:id", myStudent);
 
-//Envia un mensaje al Estudiante
+// Ruta que Envia un mensaje al Estudiante
 router.post("/dashboard/students/:id/message", sendMessage("profesor"));
 
-// Actualizar datos de un Profesor
+// Ruta para Actualizar datos de un Profesor
 router.put(
   "/change_profile",
   [
@@ -59,7 +59,7 @@ router.put(
   updateTeacherInfo
 ); 
 
-// gestionar Contraseña
+// Ruta para gestionar Contraseña
 router.patch("/change_password",[
   body("password")
     .notEmpty()
@@ -73,7 +73,7 @@ router.patch("/change_password",[
 ],
 validarCampos, managePassword);
 
-// Esta ruta va a ACTIVAR la relacion entre el Profesor y el Estudiante
+// Ruta para ACTIVAR la relacion entre el Profesor y el Estudiante
 router.patch("/students/:id/contact", acceptContact);
 
 module.exports = router;

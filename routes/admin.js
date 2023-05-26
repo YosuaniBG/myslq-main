@@ -13,20 +13,21 @@ const { validarCampos } = require("../validators/validateField");
 
 const router = express.Router();
 
-// Rutas para Administrador
-//Obtener información de un administrador específico:
+/*---------------------- Rutas para Administrador -------------------------------------------------*/
+
+// Ruta para Obtener información de un administrador específico:
 router.get("/admins/:id", OneAdmin);
 
-//Obtener todos los administradores:
+// Ruta para Obtener todos los administradores:
 router.get("/admins", AllUsersByRole("administrador"));
 
-//Obtener todos los profesores:
+// Ruta para Obtener todos los profesores:
 router.get("/teachers", AllUsersByRole("profesor"));
 
-//Obtener todos los estudiantes:
+// Ruta para Obtener todos los estudiantes:
 router.get("/students", AllUsersByRole("alumno"));
 
-//Agregar un nuevo administrador:
+// Ruta para Agregar un nuevo administrador:
 router.post(
   "/admins",
   [
@@ -51,7 +52,7 @@ router.post(
   newAdmin
 );
 
-//Actualizar informacion de un administrador específico:
+// Ruta para Actualizar informacion de un administrador específico:
 router.put(
   "/admins/:id",
   [
@@ -67,7 +68,7 @@ router.put(
   updateAdminData
 );
 
-// gestionar Contraseña
+// Ruta para gestionar Contraseña
 router.patch(
   "/change_password",
   [
@@ -85,16 +86,16 @@ router.patch(
   managePassword
 );
 
-//Actualizar el STATUS de un administrador específico:
+// Ruta para Actualizar el STATUS de un administrador específico:
 router.patch("/admins/:id", switchStatus("administrador"));
 
-//Actualizar el STATUS de un profesor específico:
+// Ruta para Actualizar el STATUS de un profesor específico:
 router.patch("/teachers/:id", switchStatus("profesor"));
 
-//Actualizar el STATUS de un estudiante específico:
+// Ruta para Actualizar el STATUS de un estudiante específico:
 router.patch("/students/:id", switchStatus("alumno"));
 
-//ACTIVAR un profesor nuevo que solicita formar parte de la plataforma
+// Ruta para ACTIVAR un profesor nuevo que solicita formar parte de la plataforma
 router.patch("/teachers/:id/admission", admissionTeacher);
 
 module.exports = router;
