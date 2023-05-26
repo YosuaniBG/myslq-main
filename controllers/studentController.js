@@ -1,3 +1,4 @@
+
 const {
   getAllMyTeachers,
   getTeachersAvailables,
@@ -17,7 +18,7 @@ const {
 
 const studentDashboard = async (req, res) => {
   try {
-    const id_student = req.body.id;
+    const id_student = req.user.id_user;
     const [user] = await getStudentById(id_student);
     const [teachers] = await getAllMyTeachers(id_student);
 
@@ -27,7 +28,7 @@ const studentDashboard = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       user,
       teachers,
     });
@@ -49,7 +50,7 @@ const teachersAvailables = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       teachers,
     });
 
@@ -62,7 +63,7 @@ const teachersAvailables = async (req, res) => {
 
 const myTeacher = async (req, res) => {
   try {
-    const id_student = req.body.id;
+    const id_student = req.user.id_user;
     const id_teacher = req.params.id;
     const [teacher] = await getTeacherById(id_teacher);
     const [chat] = await getMessages(id_teacher, id_student);
@@ -73,7 +74,7 @@ const myTeacher = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       teacher,
       chat,
     });
@@ -96,7 +97,7 @@ const teacherInfo = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       teacher,
     });
 
@@ -107,38 +108,42 @@ const teacherInfo = async (req, res) => {
   }
 };
 
-const sendMessage = async (req, res, sender) => {
-  try {
-    const id_student = req.body.id;
-    const id_teacher = req.params.id;
-    const message = req.body.message;
-
-    const [student] = await getStudentById(id_student);
-    const [teacher] = await getTeacherById(id_teacher);
-
-    if (!student[0] || !teacher[0]) {
-      return res.status(404).send({
-        msg: "No es posible establecer comunicación entre estos dos usuarios",
+const sendMessage = (sender) => {
+  return async (req, res) => {
+    try {
+      const sender_user = req.user.id_user;
+      const receiver_user = req.params.id;
+      const message = req.body.message;
+  
+      const [student] = await getStudentById(sender_user);
+      const [teacher] = await getTeacherById(receiver_user);
+  
+      if (!student[0] || !teacher[0]) {
+        return res.status(404).send({
+          msg: "No es posible establecer comunicación entre estos dos usuarios",
+        });
+      }
+      const [chat] = await insertMessage(sender_user, receiver_user, sender, message);
+  
+      res.send({
+        msg: 'Mensaje enviado',
+        chat
+      });
+  
+    } catch (error) {
+      res.status(500).json({
+        msg: error.message,
       });
     }
-    const [chat] = await insertMessage(id_teacher, id_student, sender, message);
-
-    res.status(200).send({
-      chat,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-};
+  };
+}
 
 const updateStudentInfo = async (req, res) => {
   try {
-    const [data] = await updateStudent(req.params.id, req.body);
+    const [data] = await updateStudent(req.user.id_user, req.body);
 
-    res.status(200).send({
+    res.send({
+      msg: 'Actualización satisfactoria',
       userUpdated: data,
     });
 
@@ -151,7 +156,7 @@ const updateStudentInfo = async (req, res) => {
 
 const contactTeacher = async (req, res) => {
   try {
-    const id_student = req.body.id;
+    const id_student = req.user.id_user;
     const id_teacher = req.params.id;
     const [student] = await getStudentById(id_student);
     const [teacher] = await getTeacherById(id_teacher);
@@ -164,9 +169,9 @@ const contactTeacher = async (req, res) => {
 
     const [data] = await insertRelationship(id_teacher, id_student);
 
-    res.status(200).send({
+    res.send({
       contact:
-        "Se ha establecido contacto con este profesor, espere a ser atendido por el profesor...",
+        "Se ha establecido contacto con este profesor, espere a que su solicitud sea aceptada por el profesor...",
       data: data,
     });
 
@@ -179,7 +184,7 @@ const contactTeacher = async (req, res) => {
 
 const ratingAndCommenting = async (req, res) => {
   try {
-    const id_student = req.body.id;
+    const id_student = req.user.id_user;
     const id_teacher = req.params.id;
     const comment = req.body.comment;
     const score = req.body.score;
@@ -204,7 +209,8 @@ const ratingAndCommenting = async (req, res) => {
         msg: "La comunicación con este profesor aun no ha sido aprobada",
       });
     } else {
-      res.status(200).send({
+      res.send({
+        msg: 'Su información ha sido enviada',
         comment: data,
       });
     }
@@ -215,21 +221,6 @@ const ratingAndCommenting = async (req, res) => {
   }
 };
 
-const managePassword = async (req, res) => {
-  try {
-    const password = await encrypt(req.body.password);
-    const [data] = await updatePassword(req.params.id, password);
-
-    res.status(200).send({
-      userUpdated: data,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-};
 
 const filterBySubject = async (req, res) => {
   try {
@@ -242,11 +233,12 @@ const filterBySubject = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       results: data,
     });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       msg: error.message,
     });
@@ -264,7 +256,7 @@ const filterByPrice = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       results: data,
     });
 
@@ -286,7 +278,7 @@ const filterByExperience = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       results: data,
     });
 
@@ -308,7 +300,7 @@ const filterCombined = async (req, res) => {
       });
     }
 
-    res.status(200).send({
+    res.send({
       results: data,
     });
 
@@ -329,7 +321,6 @@ module.exports = {
   updateStudentInfo,
   contactTeacher,
   ratingAndCommenting,
-  managePassword,
   filterBySubject,
   filterByPrice,
   filterByExperience,

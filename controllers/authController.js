@@ -1,21 +1,19 @@
-const { encrypt, compare } = require("../middlewares/handlePassword")
-const { tokenSign } = require("../middlewares/handlejwt")
 const { registrarUser, getUserByEmail } = require("../models/authModel")
 const bcryptjs = require('bcryptjs')
-const { generarJWT } = require("../middlewares/generate")
+const { generateToken } = require("../utility/helpers")
 const { getUserById } = require("../models/userModel")
 
 
 // Registrar un usuario
 const register = async (req, res) => {
   try {
-    req.body.password = await encrypt(req.body.password)    
+    req.body.password = bcryptjs.hashSync(req.body.password, 10); 
     const [data] = await registrarUser(req.body);
-    const [dataUser] = await getUserById(data.insertId); //TODO mantener la consistencia en todas estas variables, usar una mas general
+    const [user] = await getUserById(data.insertId); //TODO mantener la consistencia en todas estas variables, usar una mas general
 
     res.status(200).send({
-      token: await tokenSign(dataUser[0]),
-      user: dataUser[0]
+      msg: 'Su registro ha sido satisfactorio',
+      token: generateToken(user[0])
     })
   } catch (error) {
     res.status(500).json({
@@ -25,46 +23,41 @@ const register = async (req, res) => {
 }
 
 
-
-
-// login
+// login de un usuario
 const login = async (req, res) => {
   const { email, password } = req.body
   try {
     // verificar si el email existe
-    const [usuario] = await getUserByEmail(email)
+    const [user] = await getUserByEmail(email)
 
-    if (!usuario[0]) {
+    if (!user[0]) {
       return res.status(404).json({
-        msg: 'Email / Password no son correctos'
+        msg: 'Email / Password no son correctos - email'
       });
     }
 
-    // si esta activo
-    if (usuario[0].status === 0) {
+    // verificar  el usuario esta activo
+    if (user[0].status === 0) {
       return res.status(404).json({
         msg: 'Usuario deshabilitado - status: false'
       });
     }
 
     // verificar la contraseña
-    const validPassword = bcryptjs.compareSync(password, usuario[0].password);
+    const validPassword = bcryptjs.compareSync(password, user[0].password);
     if (!validPassword) {
       return res.status(404).json({
-        msg: 'Usuario / Password no son correctos - password'
+        msg: 'Email / Password no son correctos - password'
       });
     }
 
-    // general ej JWT
-    const token = await generarJWT(usuario[0].id_user);
-    delete usuario[0].password;
+    // Generar el Token si todo va bien
     res.status(200).json({
-      msg: `Bienvenido ${usuario[0].fullname}`,
-      user: usuario[0],
-      token
+      msg: `Bienvenido/a ${user[0].fullname}`,
+      token: generateToken(user[0])
     })
   } catch (error) {
-    res.status(500).json({fatal: error.message});
+    res.status(500).json({msg: error.message});
   }
 
 }

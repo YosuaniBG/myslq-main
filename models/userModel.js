@@ -1,3 +1,5 @@
+const { filterSubject } = require('../utility/helpers');
+
 const db = require('../database/dbConfig').promise();
 
 //Consulta para obtner lista de usuarios
@@ -37,7 +39,7 @@ const updateStudent = (id, {username, fullname, email, image}) => {
 }
 
 const updateTeacher = (id, {username, fullname, email, image, phone, location, subjects, description, brief_description, price, experience}) => {
-    return db.query('UPDATE users SET username = ?, fullname = ?, email = ?, image = ? phone = ?, location = ?, subjects = ?, description = ?, brief_description = ?, price = ?, experience = ? WHERE id_user = ?', 
+    return db.query('UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, phone = ?, location = ?, subjects = ?, description = ?, brief_description = ?, price = ?, experience = ? WHERE id_user = ?', 
     [username, fullname, email, image, phone, location, subjects, description, brief_description, price, experience, id]);
 }
 
@@ -69,6 +71,10 @@ const getAllMyStudents = (id) => {
     return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_student WHERE ts.id_teacher = ? AND ts.status = 1', [id]);
 }
 
+const getMyStudent = (id_teacher, id_student) => {
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_student = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
+}
+
 const getTeachersAvailables = () => {
     return db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1");
 }
@@ -90,22 +96,10 @@ const updatePassword = (id, password) => {
     [password, id]);
 }
 
-const filter = (array, subject) => {
-    let result = [];
-    for (let elem of array){
-        let include = JSON.parse(elem.subjects).includes(subject)
-       
-        if(include){
-            result.push(elem);
-        }       
-    }
-    return result;
-}
-
 const teachersBySubject = async (subject) => {
     const [teachers] = await db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1");
    
-    return filter(teachers, subject);
+    return filterSubject(teachers, subject);
 }
 
 const teachersByPrice = (min, max) => {
@@ -122,9 +116,13 @@ const teachersBy = async (subject, min_price=0, max_price, experience) => {
     const [teachers] = await db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1 AND price >= ? AND price <= ? AND experience = ?", 
     [min_price, max_price, experience]);
 
-    return filter(teachers,subject);
+    return filterSubject(teachers,subject);
 }
 
+const admission = (id) => {
+    return db.query(`UPDATE users SET active = 1 WHERE id_user = ? AND rol = 'profesor'`, 
+    [id]);
+}
 
 module.exports = {
     getUsers,
@@ -133,6 +131,7 @@ module.exports = {
     getStudentById,
     getAllMyTeachers,
     getAllMyStudents,
+    getMyStudent,
     getTeachersAvailables,
     getMessages,
     insertAdmin,
@@ -149,5 +148,6 @@ module.exports = {
     teachersBySubject,
     teachersByPrice,
     teachersByExperience,
-    teachersBy
+    teachersBy,
+    admission
 }

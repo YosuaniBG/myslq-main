@@ -1,36 +1,100 @@
 const express = require("express");
 const {
-  getOneAdmin,
-  getAllUsersByRole,
+  OneAdmin,
+  AllUsersByRole,
   newAdmin,
   updateAdminData,
-  switchStatus
+  switchStatus,
+  managePassword,
+  admissionTeacher,
 } = require("../controllers/adminController");
+const { body } = require("express-validator");
+const { validarCampos } = require("../validators/validateField");
 
 const router = express.Router();
 
 // Rutas para Administrador
+//Obtener información de un administrador específico:
+router.get("/admins/:id", OneAdmin);
 
-router.get("/admins/:id", getOneAdmin);           //Obtener información de un administrador específico:
+//Obtener todos los administradores:
+router.get("/admins", AllUsersByRole("administrador"));
 
-router.get("/admins", (req, res) => {getAllUsersByRole(req, res, "administrador");});         //Obtener todos los administradores:
+//Obtener todos los profesores:
+router.get("/teachers", AllUsersByRole("profesor"));
 
-router.get("/teachers", (req, res) => {getAllUsersByRole(req, res, "profesor");});            //Obtener todos los profesores:
- 
-router.get("/students", (req, res) => {getAllUsersByRole(req, res, "alumno");});              //Obtener todos los estudiantes:
-                                                   
-                        
-router.post("/admins", newAdmin);                 //Agregar un nuevo administrador:
+//Obtener todos los estudiantes:
+router.get("/students", AllUsersByRole("alumno"));
 
-router.put("/admins/:id", updateAdminData);       //Actualizar informacion de un administrador específico:
+//Agregar un nuevo administrador:
+router.post(
+  "/admins",
+  [
+    body("username").notEmpty().withMessage("Debe incluir el Username"),
+    body("fullname")
+      .notEmpty()
+      .withMessage("Debe incluir la el nombre completo"),
+    body("email")
+      .isEmail()
+      .withMessage("Debe incluir el email / email no válido"),
+    body("password")
+      .notEmpty()
+      .withMessage("La contraseña es requerida")
+      .isLength({ min: 8 })
+      .withMessage("La contraseña debe tener al menos 8 caracteres")
+      .matches(/\d/)
+      .withMessage("La contraseña debe contener al menos un número")
+      .matches(/[a-zA-Z]/)
+      .withMessage("La contraseña debe contener al menos una letra"),
+  ],
+  validarCampos,
+  newAdmin
+);
 
-router.patch("/admins/:id", (req, res) => {switchStatus(req, res, "administrador");});            //Actualizar el STATUS de un administrador específico:
-                    
-router.patch("/teachers/:id", (req, res) => {switchStatus(req, res, "profesor");});                 //Actualizar el STATUS de un profesor específico:
-                     
-router.patch("/students/:id", (req, res) => {switchStatus(req, res, "alumno");});                   //Actualizar el STATUS de un estudiante específico:
-   
-//TODO - Crear Filtros para estudiantes y profesores, ya sea por ACTIVOS o en el caso de los profesores los que esten solicitando inscripcion
-//TODO - Crear Filtro combinado con parametros de consulta
+//Actualizar informacion de un administrador específico:
+router.put(
+  "/admins/:id",
+  [
+    body("username").notEmpty().withMessage("Debe incluir el Username"),
+    body("fullname")
+      .notEmpty()
+      .withMessage("Debe incluir la el nombre completo"),
+    body("email")
+      .isEmail()
+      .withMessage("Debe incluir el email / email no válido"),
+  ],
+  validarCampos,
+  updateAdminData
+);
+
+// gestionar Contraseña
+router.patch(
+  "/change_password",
+  [
+    body("password")
+      .notEmpty()
+      .withMessage("La contraseña es requerida")
+      .isLength({ min: 8 })
+      .withMessage("La contraseña debe tener al menos 8 caracteres")
+      .matches(/\d/)
+      .withMessage("La contraseña debe contener al menos un número")
+      .matches(/[a-zA-Z]/)
+      .withMessage("La contraseña debe contener al menos una letra"),
+  ],
+  validarCampos,
+  managePassword
+);
+
+//Actualizar el STATUS de un administrador específico:
+router.patch("/admins/:id", switchStatus("administrador"));
+
+//Actualizar el STATUS de un profesor específico:
+router.patch("/teachers/:id", switchStatus("profesor"));
+
+//Actualizar el STATUS de un estudiante específico:
+router.patch("/students/:id", switchStatus("alumno"));
+
+//ACTIVAR un profesor nuevo que solicita formar parte de la plataforma
+router.patch("/teachers/:id/admission", admissionTeacher);
 
 module.exports = router;

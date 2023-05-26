@@ -4,25 +4,24 @@ const {
   getAllMyStudents,
   getMessages,
   activeRelationship,
-  updatePassword,
+  updateTeacher,
+  getMyStudent,
+  insertMessage,
 } = require("../models/userModel");
 
 const teacherDashboard = async (req, res) => {
   try {
-    const [user] = await getTeacherById(req.body.id);
-    const [students] = await getAllMyStudents(req.body.id);
+    const [students] = await getAllMyStudents(req.user.id_user);
 
-    if (!user[0]) {
-      return res.status(404).json({
-        msg: "No existe ningún profesor con este id",
-      });
-    }
+    let info;
+    !students[0]
+      ? (info = "Aún no tiene estudiantes registrados con usted")
+      : (info = students);
 
-    res.status(200).send({
-      user,
-      students,
+    res.send({
+      teacher: req.user,
+      students: info,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -32,22 +31,21 @@ const teacherDashboard = async (req, res) => {
 
 const myStudent = async (req, res) => {
   try {
-    const id_teacher = req.body.id;
+    const id_teacher = req.user.id_user;
     const id_student = req.params.id;
-    const [student] = await getStudentById(id_student);
+    const [student] = await getMyStudent(id_teacher, id_student);
     const [chat] = await getMessages(id_teacher, id_student);
 
     if (!student[0]) {
       return res.status(404).json({
-        msg: "No existe ningún estudiante con este id",
+        msg: "El usuario con este id no está reconocido como uno de mis estudiantes",
       });
     }
 
-    res.status(200).send({
+    res.send({
       student,
       chat,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -55,41 +53,50 @@ const myStudent = async (req, res) => {
   }
 };
 
-const sendMessage = async (req, res, sender) => {
-  try {
-    const id_teacher = req.body.id;
-    const id_student = req.params.id;
-    const message = req.body.message;
+const sendMessage = (sender) => {
+  return async (req, res) => {
+    try {
+      const sender_user = req.user.id_user;
+      const receiver_user = req.params.id;
+      const message = req.body.message;
 
-    const [student] = await getStudentById(id_student);
-    const [teacher] = await getTeacherById(id_teacher);
+      const [student] = await getStudentById(receiver_user);
+      const [teacher] = await getTeacherById(sender_user);
 
-    if (!student[0] || !teacher[0]) {
-      return res.status(404).send({
-        msg: "No es posible establecer comunicación entre estos dos usuarios",
+      if (!student[0] || !teacher[0]) {
+        return res.status(404).send({
+          msg: "No es posible establecer comunicación entre estos dos usuarios",
+        });
+      }
+      const [chat] = await insertMessage(
+        sender_user,
+        receiver_user,
+        sender,
+        message
+      );
+
+      res.send({
+        msg: "Mensaje enviado",
+        chat,
+      });
+    } catch (error) {
+      res.status(500).json({
+        msg: error.message,
       });
     }
-    const [chat] = await insertMessage(id_teacher, id_student, sender, message);
-
-    res.status(200).send({
-      chat,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
+  };
 };
 
 const updateTeacherInfo = async (req, res) => {
   try {
-    const [data] = await updateTeacher(req.params.id, req.body);
+    req.body.subjects = JSON.stringify(req.body.subjects);
+    req.body.location = JSON.stringify(req.body.location);
+    const [data] = await updateTeacher(req.user.id_user, req.body);
 
-    res.status(200).send({
+    res.send({
+      msg: "Actualización satisfactoria",
       userUpdated: data,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -100,30 +107,28 @@ const updateTeacherInfo = async (req, res) => {
 const acceptContact = async (req, res) => {
   try {
     const id_student = req.params.id;
-    const id_teacher = req.body.id;
+    const id_teacher = req.user.id_user;
 
     const [data] = await activeRelationship(id_teacher, id_student);
 
-    res.status(200).send({
+    if (data.changedRows === 0 && data.affectedRows === 0) {
+      return res.send({
+        msg: "Este usuario no ha solicitado entrar en contacto con usted",
+        userUpdated: data,
+      });
+    }
+
+    if (data.changedRows === 0 && data.affectedRows !== 0) {
+      return res.send({
+        msg: "Este alumno ya ha sido aceptado previamente",
+        userUpdated: data,
+      });
+    }
+
+    res.send({
+      msg: "Alumno aceptado",
       userUpdated: data,
     });
-
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-};
-
-const managePassword = async (req, res) => {
-  try {
-    const password = await encrypt(req.body.password)
-    const [data] = await updatePassword(req.params.id, password);
-
-    res.status(200).send({
-      userUpdated: data,
-    });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -137,5 +142,4 @@ module.exports = {
   sendMessage,
   updateTeacherInfo,
   acceptContact,
-  managePassword,
 };

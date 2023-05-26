@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { checkToken } = require('../middlewares/checkToken');
+const { checkRole } = require('../middlewares/checkRol');
 
 
 class Server {
@@ -39,10 +41,10 @@ class Server {
 
     routes() {
 
-        this.app.use( this.paths.auth,[], require('../routes/auth'));
-        this.app.use( this.paths.admin,[], require('../routes/admin'));
-        this.app.use( this.paths.student,[], require('../routes/student'));
-        this.app.use( this.paths.teacher,[], require('../routes/teacher'));
+        this.app.use( this.paths.auth, require('../routes/auth'));
+        this.app.use( this.paths.admin, checkToken, checkRole('administrador'), require('../routes/admin'));
+        this.app.use( this.paths.student, checkToken, checkRole('alumno'), require('../routes/student'));
+        this.app.use( this.paths.teacher, checkToken, checkRole('profesor'), require('../routes/teacher'));
 
         /**
          * Nota: TODO: middlewares basado en roles
