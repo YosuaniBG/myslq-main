@@ -49,7 +49,7 @@ class Server {
         this.app.use( (req, res, next) => {
             res.status(404).json({
                 msg: "Ruta no encontrada...",
-                availableRoutes: ["api/auth","api/admin","api/teacher","api/student"]
+                api_documentation: "https://documenter.getpostman.com/view/24051322/2s93m7W26B"
             }, null, 2)
         });
 
