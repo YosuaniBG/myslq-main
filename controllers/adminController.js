@@ -93,10 +93,20 @@ const updateAdminData = async (req, res) => {
 };
 
 // Manejador para gestionar la contraseña del administrador loggeado
+// Manejador común
 const managePassword = async (req, res) => {
   try {
-    const password = bcryptjs.hashSync(req.body.password, 10);
-    const [data] = await updatePassword(req.user.id_user, password);
+    const [userlogged] = await getUserById(req.user.id_user)
+
+    const validPassword = bcryptjs.compareSync(req.body.oldPassword, userlogged[0].password);
+    if (!validPassword) {
+      return res.status(404).json({
+        msg: 'El password antiguo no es correcto'
+      });
+    }
+
+    const newPassword = bcryptjs.hashSync(req.body.newPassword, 10);
+    const [data] = await updatePassword(userlogged[0].id_user, newPassword);
 
     res.send({
       msg:'Password actualizado',
