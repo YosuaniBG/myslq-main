@@ -26,13 +26,9 @@ router.post("/register",[
 // Ruta para el proceso de login de un usuario (Adminstrador, Profesor o Estudiante)
 router.post("/login",[
   body("email")
-    .isEmail()
-    .withMessage("Debe incluir el email / email no válido"),
+    .notEmpty().withMessage('El correo es requerido'),
   body("password")
     .notEmpty().withMessage('La contraseña es requerida')
-    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres')
-    .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
-    .matches(/[a-zA-Z]/).withMessage('La contraseña debe contener al menos una letra')
 ], validarCampos, login );
 
 

@@ -25,7 +25,7 @@ router.post("/dashboard/students/:id/message", sendMessage("profesor"));
 
 // Ruta para Actualizar datos de un Profesor
 router.put(
-  "/change_profile",
+  "/dashboard/change_profile",
   [
     body("username")
       .notEmpty().withMessage("Debe incluir el Username"),
@@ -60,7 +60,7 @@ router.put(
 ); 
 
 // Ruta para gestionar Contraseña
-router.patch("/change_password",[
+router.patch("/dashboard/change_password",[
   body("password")
     .notEmpty()
     .withMessage("La contraseña es requerida")
@@ -74,6 +74,6 @@ router.patch("/change_password",[
 validarCampos, managePassword);
 
 // Ruta para ACTIVAR la relacion entre el Profesor y el Estudiante
-router.patch("/students/:id/contact", acceptContact);
+router.patch("/dashboard/students/:id/contact", acceptContact);
 
 module.exports = router;

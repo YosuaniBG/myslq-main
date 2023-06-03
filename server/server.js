@@ -50,7 +50,7 @@ class Server {
         this.app.use( this.paths.public, require('../routes/public'));
         this.app.use( (req, res, next) => {
             res.status(404).json({
-                msg: "Ruta no encontrada...",
+                msg: "Bienvenidos a la API del proyecto Teacher_app, para proceder le recomendamos que se estudie nuestra documentacion en el siguiente enlace...",
                 api_documentation: "https://documenter.getpostman.com/view/24051322/2s93m7W26B"
             }, null, 2)
         });

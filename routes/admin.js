@@ -16,20 +16,20 @@ const router = express.Router();
 /*---------------------- Rutas para Administrador -------------------------------------------------*/
 
 // Ruta para Obtener información de un administrador específico:
-router.get("/admins/:id", OneAdmin);
+router.get("/dashboard/admins/:id", OneAdmin);
 
 // Ruta para Obtener todos los administradores:
-router.get("/admins", AllUsersByRole("administrador"));
+router.get("/dashboard/admins", AllUsersByRole("administrador"));
 
 // Ruta para Obtener todos los profesores:
-router.get("/teachers", AllUsersByRole("profesor"));
+router.get("/dashboard/teachers", AllUsersByRole("profesor"));
 
 // Ruta para Obtener todos los estudiantes:
-router.get("/students", AllUsersByRole("alumno"));
+router.get("/dashboard/students", AllUsersByRole("alumno"));
 
 // Ruta para Agregar un nuevo administrador:
 router.post(
-  "/admins",
+  "/dashboard/admins",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")
@@ -54,7 +54,7 @@ router.post(
 
 // Ruta para Actualizar informacion de un administrador específico:
 router.put(
-  "/admins/:id",
+  "/dashboard/admins/:id",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")
@@ -70,7 +70,7 @@ router.put(
 
 // Ruta para gestionar Contraseña
 router.patch(
-  "/change_password",
+  "/dashboard/change_password",
   [
     body("password")
       .notEmpty()
@@ -87,15 +87,15 @@ router.patch(
 );
 
 // Ruta para Actualizar el STATUS de un administrador específico:
-router.patch("/admins/:id", switchStatus("administrador"));
+router.patch("/dashboard/admins/:id", switchStatus("administrador"));
 
 // Ruta para Actualizar el STATUS de un profesor específico:
-router.patch("/teachers/:id", switchStatus("profesor"));
+router.patch("/dashboard/teachers/:id", switchStatus("profesor"));
 
 // Ruta para Actualizar el STATUS de un estudiante específico:
-router.patch("/students/:id", switchStatus("alumno"));
+router.patch("/dashboard/students/:id", switchStatus("alumno"));
 
 // Ruta para ACTIVAR un profesor nuevo que solicita formar parte de la plataforma
-router.patch("/teachers/:id/admission", admissionTeacher);
+router.patch("/dashboard/teachers/:id/admission", admissionTeacher);
 
 module.exports = router;

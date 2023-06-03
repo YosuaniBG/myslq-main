@@ -28,32 +28,32 @@ router.get("/dashboard", studentDashboard);
 router.get("/dashboard/teachers/:id", myTeacher); 
 
 // Ruta que Devuelve un listado de profesores ACTIVOS
-router.get("/teachers", teachersAvailables); 
+router.get("/dashboard/teachers", teachersAvailables); 
 
 // Ruta que ejecuta un filtro para los profesores por materia api/student/teachers/filterBySubject?subject=matematicas
-router.get("/teachers/filterBySubject", filterBySubject);
+router.get("/dashboard/teachers/filterBySubject", filterBySubject);
 
 // Ruta que ejecuta un filtro para los profesores por precio api/student/teachers/filterByPrice?min_price=50&max_price=100
-router.get("/teachers/filterByPrice", filterByPrice);
+router.get("/dashboard/teachers/filterByPrice", filterByPrice);
 
 // Ruta que ejecuta un filtro para los profesores por experiencia api/student/teachers/filterByExperience?experience=5
-router.get("/teachers/filterByExperience", filterByExperience);
+router.get("/dashboard/teachers/filterByExperience", filterByExperience);
 
 // Ruta que ejecuta un filtro combinado para los profesores por materia, precio y experiencia
 // api/student/teachers/filterCombined?teachers?subject=ingles&min_price=50&years_of_experience=3
-router.get("/teachers/filterCombined", filterCombined);
+router.get("/dashboard/teachers/filterCombined", filterCombined);
 
 // Ruta que Devuelve TODA la informacion de un profesor
-router.get("/teachers/:id", teacherInfo); 
+router.get("/dashboard/teachers/:id", teacherInfo); 
 
 // Ruta que Envia un mensaje al Profesor
 router.post("/dashboard/teachers/:id/message", sendMessage("alumno")); 
 
  // Ruta para establecer la relacion inicil entre un estudiante y un profesor
- router.post("/teachers/:id/contact", contactTeacher);
+ router.post("/dashboard/teachers/:id/contact", contactTeacher);
 
 // Ruta para Actualizar datos de un Alumno
-router.put("/change_profile", [
+router.put("/dashboard/change_profile", [
   body("username")
     .notEmpty().withMessage("Debe incluir el Username"),
   body("fullname")
@@ -65,7 +65,7 @@ router.put("/change_profile", [
   ], validarCampos, updateStudentInfo); 
 
 // Ruta para gestionar Contraseña
-router.patch("/change_password",[
+router.patch("/dashboard/change_password",[
   body("password")
     .notEmpty()
     .withMessage("La contraseña es requerida")
@@ -79,7 +79,7 @@ router.patch("/change_password",[
 validarCampos, managePassword); 
 
 // Ruta para Actualizar la Puntuacion y los comentarios que hace un estudiante a un profesor siempre y cuando la relacion este formalizada
-router.patch("/teachers/:id/comments", [
+router.patch("/dashboard/teachers/:id/comments", [
   body("score")
     .notEmpty().withMessage("Debe incluir el Username")
     .isInt().withMessage("Debe ser un número entero"),
