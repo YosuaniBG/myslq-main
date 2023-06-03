@@ -25,7 +25,7 @@ const router = express.Router();
 router.get("/dashboard", studentDashboard); 
 
 // Ruta que Devuelve un  OBJETO con los datos de un profesor y una lista con sus conversaciones
-router.get("/dashboard/teachers/:id", myTeacher); 
+router.get("/dashboard/my_teacher/:id", myTeacher); 
 
 // Ruta que Devuelve un listado de profesores ACTIVOS
 router.get("/dashboard/teachers", teachersAvailables); 
