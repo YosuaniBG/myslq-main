@@ -1,17 +1,12 @@
 const express = require("express");
 const {
   studentDashboard,
-  teachersAvailables,
   myTeacher,
   teacherInfo,
   sendMessage,
   updateStudentInfo,
   contactTeacher,
   ratingAndCommenting,
-  filterBySubject,
-  filterByPrice,
-  filterByExperience,
-  filterCombined
 } = require("../controllers/studentController");
 const { managePassword } = require("../controllers/adminController");
 const { validarCampos } = require("../validators/validateField");
@@ -27,21 +22,21 @@ router.get("/dashboard", studentDashboard);
 // Ruta que Devuelve un  OBJETO con los datos de un profesor y una lista con sus conversaciones
 router.get("/dashboard/my_teacher/:id", myTeacher); 
 
-// Ruta que Devuelve un listado de profesores ACTIVOS
-router.get("/dashboard/teachers", teachersAvailables); 
+// // Ruta que Devuelve un listado de profesores ACTIVOS
+// router.get("/dashboard/teachers", teachersAvailables); 
 
-// Ruta que ejecuta un filtro para los profesores por materia api/student/teachers/filterBySubject?subject=matematicas
-router.get("/dashboard/teachers/filterBySubject", filterBySubject);
+// // Ruta que ejecuta un filtro para los profesores por materia api/student/teachers/filterBySubject?subject=matematicas
+// router.get("/dashboard/teachers/filterBySubject", filterBySubject);
 
-// Ruta que ejecuta un filtro para los profesores por precio api/student/teachers/filterByPrice?min_price=50&max_price=100
-router.get("/dashboard/teachers/filterByPrice", filterByPrice);
+// // Ruta que ejecuta un filtro para los profesores por precio api/student/teachers/filterByPrice?min_price=50&max_price=100
+// router.get("/dashboard/teachers/filterByPrice", filterByPrice);
 
-// Ruta que ejecuta un filtro para los profesores por experiencia api/student/teachers/filterByExperience?experience=5
-router.get("/dashboard/teachers/filterByExperience", filterByExperience);
+// // Ruta que ejecuta un filtro para los profesores por experiencia api/student/teachers/filterByExperience?experience=5
+// router.get("/dashboard/teachers/filterByExperience", filterByExperience);
 
-// Ruta que ejecuta un filtro combinado para los profesores por materia, precio y experiencia
-// api/student/teachers/filterCombined?teachers?subject=ingles&min_price=50&years_of_experience=3
-router.get("/dashboard/teachers/filterCombined", filterCombined);
+// // Ruta que ejecuta un filtro combinado para los profesores por materia, precio y experiencia
+// // api/student/teachers/filterCombined?teachers?subject=ingles&min_price=50&years_of_experience=3
+// router.get("/dashboard/teachers/filterCombined", filterCombined);
 
 // Ruta que Devuelve TODA la informacion de un profesor
 router.get("/dashboard/teachers/:id", teacherInfo); 
