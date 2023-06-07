@@ -61,30 +61,6 @@ const myTeacher = async (req, res) => {
   }
 };
 
-// Manejador que muestra los datos de un profesor registrado en el sistema que este ACTIVO 
-const teacherInfo = async (req, res) => {
-  try {
-    const id_teacher = req.params.id;
-    const [teacher] = await getTeacherById(id_teacher);
-
-    //Verifica si el identificador dado corresponde a un profesor
-    if (!teacher[0]) {
-      return res.status(404).json({
-        msg: "No existe ningún profesor con este id",
-      });
-    }
-
-    res.send({
-      teacher,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-};
-
 // Manejador para enviar mensajes a un profesor que este previamente contratado con el estudiante loggeado 
 const sendMessage = (sender) => {
   return async (req, res) => {
@@ -230,7 +206,6 @@ const ratingAndCommenting = async (req, res) => {
 module.exports = {
   studentDashboard,
   myTeacher,
-  teacherInfo,
   sendMessage,
   updateStudentInfo,
   contactTeacher,

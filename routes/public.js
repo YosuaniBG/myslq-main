@@ -1,9 +1,12 @@
 const express = require("express");
-const { teachersAvailables, filterBySubject, filterByPrice, filterByExperience, filterCombined } = require("../controllers/publicController");
+const { teachersAvailables, filterBySubject, filterByPrice, filterByExperience, filterCombined, teacherInfo } = require("../controllers/publicController");
 const router = express.Router();
 
 // Ruta que Devuelve un listado de profesores ACTIVOS
 router.get("/teachers", teachersAvailables); 
+
+// Ruta que Devuelve los datos de un profesor
+router.get("/teachers/:id", teacherInfo); 
 
 // Rutas para filtros ----------------------------------------------------------------------------------
 // Ruta que ejecuta un filtro para los profesores por materia api/public/teachers/filterBySubject?subject=matematicas
