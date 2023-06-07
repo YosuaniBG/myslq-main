@@ -1,6 +1,21 @@
 const bcryptjs = require('bcryptjs');
 const { getUsers, updateAdmin, updateUserStatus, getUserById, insertAdmin, updatePassword, admission } = require("../models/userModel");
 
+
+// Manejador para obtener los datos del usuario registrado y sus profesores
+const adminDashboard = async (req, res) => {
+  try {
+    res.send({
+      admin: req.user,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
+
 // Manejador para obtener los datos de un usuario con rol ADMINISTRADOR a partir de su id
 const OneAdmin = async (req, res) => {
   try {
@@ -182,6 +197,7 @@ const admissionTeacher = async (req, res) => {
 
 
 module.exports = {
+  adminDashboard,
   OneAdmin,
   AllUsersByRole,
   newAdmin,
