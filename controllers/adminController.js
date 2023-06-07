@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const { getUsers, updateAdmin, updateUserStatus, getUserById, insertAdmin, updatePassword, admission } = require("../models/userModel");
+const { registrarUser } = require('../models/authModel');
 
 
 // Manejador para obtener los datos del usuario registrado y sus profesores
@@ -89,14 +90,20 @@ const AllUsersByRole = (rol) => {
 }
 
 // Manejador para registrar un nuevo ADMINISTRADOR
-const newAdmin = async (req, res) => {
+const newUser = async (req, res) => {
   try {
     req.body.password = bcryptjs.hashSync(req.body.password, 10); 
-    const [data] = await insertAdmin(req.body);
+    const [data] = await registrarUser(req.body);
     const [dataUser] = await getUserById(data.insertId);
 
+    if(!dataUser[0]){
+      return res.status(404).json({
+        msg: 'No se pudo realizar el registro'
+      });
+    }
+
     res.send({
-      user: dataUser[0]
+      msg: 'Su registro ha sido satisfactorio'
     })
 
   } catch (error) {
@@ -224,7 +231,7 @@ module.exports = {
   OneAdmin,
   userInfo,
   AllUsersByRole,
-  newAdmin,
+  newUser,
   updateAdminData,
   managePassword,
   switchStatus,

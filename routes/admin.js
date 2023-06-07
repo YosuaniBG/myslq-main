@@ -9,6 +9,7 @@ const {
   admissionTeacher,
   adminDashboard,
   userInfo,
+  newUser,
 } = require("../controllers/adminController");
 const { body } = require("express-validator");
 const { validarCampos } = require("../validators/validateField");
@@ -37,12 +38,12 @@ router.get("/dashboard/students", AllUsersByRole("alumno"));
 
 // Ruta para Agregar un nuevo administrador:
 router.post(
-  "/dashboard/admins",
+  "/dashboard/newUser",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")
       .notEmpty()
-      .withMessage("Debe incluir la el nombre completo"),
+      .withMessage("Debe incluir el nombre completo"),
     body("email")
       .isEmail()
       .withMessage("Debe incluir el email / email no válido"),
@@ -55,9 +56,12 @@ router.post(
       .withMessage("La contraseña debe contener al menos un número")
       .matches(/[a-zA-Z]/)
       .withMessage("La contraseña debe contener al menos una letra"),
+    body("rol")
+      .notEmpty()
+      .withMessage("Debe incluir el nombre rol"),
   ],
   validarCampos,
-  newAdmin
+  newUser
 );
 
 // Ruta para Actualizar informacion de un administrador específico:
