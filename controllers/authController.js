@@ -14,10 +14,13 @@ const register = async (req, res) => {
     const [data] = await registrarUser(req.body);
     const [user] = await getUserById(data.insertId); 
 
+    delete user[0].password;
+
     // Muestra un mensaje SUCCESSFUL y genera un Token para este usuario
     res.status(200).send({
       msg: 'Su registro ha sido satisfactorio',
-      token: generateToken(user[0])
+      token: generateToken(user[0]),
+      user: user[0]
     })
   } catch (error) {
     res.status(500).json({
@@ -55,10 +58,13 @@ const login = async (req, res) => {
       });
     }
 
+    delete user[0].password;
+
     // Muestra mensaje de BIENVENIDA y Genera el Token si todo va bien
     res.status(200).json({
       msg: `Bienvenido/a ${user[0].fullname}`,
-      token: generateToken(user[0])
+      token: generateToken(user[0]),
+      user: user[0]
     })
   } catch (error) {
     res.status(500).json({msg: error.message});
