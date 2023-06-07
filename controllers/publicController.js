@@ -5,6 +5,7 @@ const {
     teachersByPrice,
     teachersByExperience,
     teachersBy,
+    getTeacherById,
   } = require("../models/userModel");
   
   // Manejador que muestra un listado de todos los profesores HABILITADOS en la BD
