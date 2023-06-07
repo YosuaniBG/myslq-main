@@ -8,6 +8,7 @@ const {
   managePassword,
   admissionTeacher,
   adminDashboard,
+  userInfo,
 } = require("../controllers/adminController");
 const { body } = require("express-validator");
 const { validarCampos } = require("../validators/validateField");
@@ -18,6 +19,9 @@ const router = express.Router();
 
 // Ruta que Devuelve un objeto con los datos del estudiantes y ademas una lista de sus profesores
 router.get("/dashboard", adminDashboard); 
+
+// Ruta que Devuelve un objeto con los datos un usuario
+router.get("/dashboard/userInfo/:id", userInfo); 
 
 // Ruta para Obtener información de un administrador específico:
 router.get("/dashboard/admins/:id", OneAdmin);

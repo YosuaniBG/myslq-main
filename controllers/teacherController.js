@@ -1,6 +1,5 @@
 const {
   getStudentById,
-  getTeacherById,
   getAllMyStudents,
   getMessages,
   activeRelationship,

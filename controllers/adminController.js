@@ -47,6 +47,29 @@ const OneAdmin = async (req, res) => {
   }
 };
 
+const userInfo = async (req, res) => {
+  try {
+    const [data] = await getUserById(req.params.id);
+
+    // Verifica que la consulta haya devuelto algún valor que coincida
+    if (!data[0]) {
+      return res.status(404).json({
+        msg: "El usuario no existe",
+      });  
+    }
+
+    // Verifica que el id del usuario por parametro corresponda a un administrador
+      res.send({
+        user: data[0],
+      });
+
+  } catch (error) {
+    res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
+
 // Manejador que permite mostar un listado de todos los usuarios con un rol determinado
 const AllUsersByRole = (rol) => {
   return async (req, res) => {
@@ -199,6 +222,7 @@ const admissionTeacher = async (req, res) => {
 module.exports = {
   adminDashboard,
   OneAdmin,
+  userInfo,
   AllUsersByRole,
   newAdmin,
   updateAdminData,
