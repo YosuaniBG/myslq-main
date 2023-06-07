@@ -4,11 +4,11 @@ const { getUserById } = require('../models/userModel');
 // Middleware para chequear que el ususario que accede tenga un token válido
 const checkToken = async (req, res, next) => {
 
-    if(!req.headers['Authorization']){
+    if(!req.headers['authorization']){
         return res.status(500).json({ msg: 'Debe incluirse la cabecera Authorization'});
     }
 
-    const token = req.headers['Authorization'];
+    const token = req.headers['authorization'];
 
     let obj;
     try{
