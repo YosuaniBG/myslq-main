@@ -34,9 +34,9 @@ const updateAdmin = (id, {username, fullname, email, image, description}) => {
     [username, fullname, email, image, description, id]);
 }
 
-const updateStudent = (id, {username, fullname, email, image, description}) => {
-    return db.query("UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, description = ? WHERE id_user = ? AND rol = 'alumno'", 
-    [username, fullname, email, image, description, id]);
+const updateStudent = (id, {username, fullname, email, image, phone, description}) => {
+    return db.query("UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, phone = ?, description = ? WHERE id_user = ? AND rol = 'alumno'", 
+    [username, fullname, email, image, phone, description, id]);
 }
 
 const updateTeacher = (id, {username, fullname, email, image, phone, location, subjects, description, brief_description, cover, price, experience}) => {
