@@ -18,7 +18,7 @@ const router = express.Router();
 
 /*---------------------- Rutas para Administrador -------------------------------------------------*/
 
-// Ruta que Devuelve un objeto con los datos del estudiantes y ademas una lista de sus profesores
+// Ruta que Devuelve un objeto con los datos del administrador
 router.get("/dashboard", adminDashboard); 
 
 // Ruta que Devuelve un objeto con los datos un usuario
