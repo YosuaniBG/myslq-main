@@ -66,7 +66,7 @@ router.post(
 );
 
 // Ruta para Actualizar informacion de un administrador específico:
-router.put("/dashboard/admins/change_profile",
+router.put("/dashboard/change_profile",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")
