@@ -29,18 +29,18 @@ const insertAdmin = ({username, fullname, email, password}) => {
     [username, fullname, email, password]); 
 }
 
-const updateAdmin = (id, {username, fullname, email}) => {
-    return db.query("UPDATE users SET username = ?, fullname = ?, email = ? WHERE id_user = ? AND rol = 'administrador'", 
-    [username, fullname, email, id]);
+const updateAdmin = (id, {username, fullname, email, image, description}) => {
+    return db.query("UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, description = ? WHERE id_user = ? AND rol = 'administrador'", 
+    [username, fullname, email, image, description, id]);
 }
 
 const updateStudent = (id, {username, fullname, email, image}) => {
-    return db.query('UPDATE users SET username = ?, fullname = ?, email = ?, image = ? WHERE id_user = ?', 
-    [username, fullname, email, image, id]);
+    return db.query("UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, description = ? WHERE id_user = ? AND rol = 'alumno'", 
+    [username, fullname, email, image, description, id]);
 }
 
 const updateTeacher = (id, {username, fullname, email, image, phone, location, subjects, description, brief_description, cover, price, experience}) => {
-    return db.query('UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, phone = ?, location = ?, subjects = ?, description = ?, brief_description = ?, cover = ?, price = ?, experience = ? WHERE id_user = ?', 
+    return db.query("UPDATE users SET username = ?, fullname = ?, email = ?, image = ?, phone = ?, location = ?, subjects = ?, description = ?, brief_description = ?, cover = ?, price = ?, experience = ? WHERE id_user = ? AND rol = 'profesor'", 
     [username, fullname, email, image, phone, location, subjects, description, brief_description, cover, price, experience, id]);
 }
 
