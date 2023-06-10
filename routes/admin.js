@@ -4,6 +4,7 @@ const {
   AllUsersByRole,
   newAdmin,
   updateAdminData,
+  updateAdminInfo,
   switchStatus,
   managePassword,
   admissionTeacher,
@@ -62,6 +63,21 @@ router.post(
   ],
   validarCampos,
   newUser
+);
+
+// Ruta para Actualizar informacion de un administrador específico:
+router.put("/dashboard/admins/change_profile",
+  [
+    body("username").notEmpty().withMessage("Debe incluir el Username"),
+    body("fullname")
+      .notEmpty()
+      .withMessage("Debe incluir la el nombre completo"),
+    body("email")
+      .isEmail()
+      .withMessage("Debe incluir el email / email no válido"),
+  ],
+  validarCampos,
+  updateAdminInfo
 );
 
 // Ruta para Actualizar informacion de un administrador específico:

@@ -113,6 +113,29 @@ const newUser = async (req, res) => {
   }
 };
 
+const updateAdminInfo = async (req, res) => {
+  try {
+    const [data] = await updateAdmin(req.user.id_user, req.body);
+
+    // Verifica que al ejecutarse la UPDATE, si esta afecta una fila es porque ese id corresponde a un Administrador
+    if(data.affectedRows === 0){
+      return res.status(500).send({
+        msg: 'No existe ningún administrador con este id'
+      })
+    }
+
+    res.send({
+      msg: 'Actualización satisfactoria',
+      userUpdated: data
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
+
 // Manejador para actualizar los datos de otro Administrador 
 const updateAdminData = async (req, res) => {
   try {
@@ -233,6 +256,7 @@ module.exports = {
   AllUsersByRole,
   newUser,
   updateAdminData,
+  updateAdminInfo,
   managePassword,
   switchStatus,
   admissionTeacher
