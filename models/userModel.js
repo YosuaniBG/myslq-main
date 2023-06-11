@@ -77,7 +77,7 @@ const getMyStudent = (id_teacher, id_student) => {
 }
 
 const getMyTeacher = (id_student, id_teacher) => {
-    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND ts.status = 1 AND u.status = 1', [id_teacher, id_student]);
+    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ? AND u.status = 1', [id_teacher, id_student]);
 }
 
 const getTeachersAvailables = () => {
