@@ -65,7 +65,7 @@ const getRelationship = (id_teacher, id_student) => {
 }
 
 const getAllMyTeachers = (id) => {
-    return db.query('SELECT u.* FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND ts.status = 1 AND u.status = 1', [id]);
+    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND u.status = 1', [id]);
 }
 
 const getAllMyStudents = (id) => {
