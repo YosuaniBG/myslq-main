@@ -102,7 +102,6 @@ const sendMessage = (sender) => {
   
       res.send({
         msg: 'Mensaje enviado',
-        chat
       });
   
     } catch (error) {
