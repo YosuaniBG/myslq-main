@@ -99,7 +99,7 @@ router.put("/dashboard/admins/:id",
 // Ruta para gestionar Contraseña
 router.put("/dashboard/change_password",
   [
-    body("password")
+    body("newPassword")
       .notEmpty()
       .withMessage("La contraseña es requerida")
       .isLength({ min: 8 })
