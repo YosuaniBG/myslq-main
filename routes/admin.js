@@ -99,7 +99,7 @@ router.put(
 );
 
 // Ruta para gestionar Contraseña
-router.patch("/dashboard/change_password",
+router.put("/dashboard/change_password",
   [
     body("password")
       .notEmpty()
