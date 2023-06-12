@@ -94,7 +94,11 @@ const sendMessage = (sender) => {
         });
       }
 
-      const [chat] = await insertMessage(sender_user, receiver_user, sender, message);
+      let result;
+      if(sender === 'alumno')
+         result = await insertMessage(receiver_user, sender_user, sender, message);
+      else
+        result = await insertMessage(sender_user, receiver_user, sender, message);
   
       res.send({
         msg: 'Mensaje enviado',
