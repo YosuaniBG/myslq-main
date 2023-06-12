@@ -24,8 +24,7 @@ router.get("/dashboard/students/:id", myStudent);
 router.post("/dashboard/students/:id/message", sendMessage("profesor"));
 
 // Ruta para Actualizar datos de un Profesor
-router.put(
-  "/dashboard/change_profile",
+router.put("/dashboard/change_profile",
   [
     body("username")
       .notEmpty().withMessage("Debe incluir el Username"),
@@ -55,12 +54,11 @@ router.put(
       .notEmpty().withMessage("Debe incluir sus años de experiencia")
       .isInt().withMessage("El valor proporcionado es incorrecto"),
   ],
-  validarCampos,
-  updateTeacherInfo
-); 
+  validarCampos, updateTeacherInfo); 
 
 // Ruta para gestionar Contraseña
-router.patch("/dashboard/change_password",[
+router.put("/dashboard/change_password",
+[
   body("password")
     .notEmpty()
     .withMessage("La contraseña es requerida")

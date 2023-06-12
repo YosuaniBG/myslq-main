@@ -38,8 +38,7 @@ router.get("/dashboard/teachers", AllUsersByRole("profesor"));
 router.get("/dashboard/students", AllUsersByRole("alumno"));
 
 // Ruta para Agregar un nuevo administrador:
-router.post(
-  "/dashboard/newUser",
+router.post("/dashboard/newUser",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")
@@ -83,8 +82,7 @@ router.put("/dashboard/change_profile",
 );
 
 // Ruta para Actualizar informacion de un administrador específico:
-router.put(
-  "/dashboard/admins/:id",
+router.put("/dashboard/admins/:id",
   [
     body("username").notEmpty().withMessage("Debe incluir el Username"),
     body("fullname")

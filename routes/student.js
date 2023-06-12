@@ -40,7 +40,7 @@ router.put("/dashboard/change_profile", [
   ], validarCampos, updateStudentInfo); 
 
 // Ruta para gestionar Contraseña
-router.patch("/dashboard/change_password",[
+router.put("/dashboard/change_password",[
   body("newPassword")
     .notEmpty()
     .withMessage("La contraseña es requerida")
