@@ -64,12 +64,20 @@ const getRelationship = (id_teacher, id_student) => {
     [id_teacher, id_student]);
 }
 
-const getAllMyTeachers = (id) => {
-    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND u.status = 1', [id]);
+const getAllMyTeachersActive = (id) => {
+    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND u.status = 1 AND ts.status = 1', [id]);
 }
 
-const getAllMyStudents = (id) => {
-    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_student WHERE ts.id_teacher = ?', [id]);
+const getAllMyTeachersPending = (id) => {
+    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE ts.id_student = ? AND u.status = 1 AND ts.status = 0', [id]);
+}
+
+const getAllMyStudentsActive = (id) => {
+    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_student WHERE ts.id_teacher = ? AND ts.status = 1', [id]);
+}
+
+const getAllMyStudentsPending = (id) => {
+    return db.query('SELECT u.*, ts.status as relationship FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_student WHERE ts.id_teacher = ? AND ts.status = 0', [id]);
 }
 
 const getMyStudent = (id_teacher, id_student) => {
@@ -134,8 +142,10 @@ module.exports = {
     getUserById,
     getTeacherById,
     getStudentById,
-    getAllMyTeachers,
-    getAllMyStudents,
+    getAllMyTeachersActive,
+    getAllMyTeachersPending,
+    getAllMyStudentsActive,
+    getAllMyStudentsPending,
     getMyStudent,
     getMyTeacher,
     getTeachersAvailables,

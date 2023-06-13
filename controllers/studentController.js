@@ -1,6 +1,5 @@
 
 const {
-  getAllMyTeachers,
   getMessages,
   insertMessage,
   updateStudent,
@@ -8,24 +7,33 @@ const {
   updateRelationship,
   getRelationship,
   getTeacherById,
-  getMyTeacher
+  getMyTeacher,
+  getAllMyTeachersActive,
+  getAllMyTeachersPending
 } = require("../models/userModel");
 
 // Manejador para obtener los datos del usuario registrado y sus profesores
 const studentDashboard = async (req, res) => {
   try {
-    const [teachers] = await getAllMyTeachers(req.user.id_user);
+    const [teachersActive] = await getAllMyTeachersActive(req.user.id_user);
+    const [teachersPending] = await getAllMyTeachersPending(req.user.id_user);
 
-    let info;
+    let active;
+    let pending;
 
     // Verifica si la consulta devuelve un listado de profesores del estudiante loggeado
-    !teachers[0]
-      ? (info = "Aún no tiene profesores contratados")
-      : (info = teachers);
+    !teachersActive[0]
+      ? (active = "Aún no tiene profesores contratados")
+      : (active = teachersActive);
+
+    !teachersPending[0]
+      ? (pending = "No tiene solicitudes realizadas pendientes")
+      : (pending = teachersPending);
 
     res.send({
       student: req.user,
-      teachers: info,
+      teachersActive: active,
+      teachersPending: pending
     });
 
   } catch (error) {
