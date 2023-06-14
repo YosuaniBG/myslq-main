@@ -12,6 +12,14 @@ const getTeacherById = (id) => {
     return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'profesor' AND status = 1 AND active = 1", [id]);
 }
 
+const getTeacherAverage = (id) => {
+    return db.query("SELECT AVG(ts.score) as average FROM teachers_students as ts WHERE ts.id_teacher = ?", [id]);
+}
+
+const getTeacherComments = (id) => {
+    return db.query("SELECT comments FROM teachers_students as ts WHERE ts.id_teacher = ?", [id]);
+}
+
 const getStudentById = (id) => {
     return db.query("SELECT * FROM users WHERE id_user = ? AND rol = 'alumno' AND status = 1", [id]);
 }
@@ -141,6 +149,8 @@ module.exports = {
     getUsers,
     getUserById,
     getTeacherById,
+    getTeacherAverage,
+    getTeacherComments,
     getStudentById,
     getAllMyTeachersActive,
     getAllMyTeachersPending,

@@ -6,6 +6,8 @@ const {
     teachersByExperience,
     teachersBy,
     getTeacherById,
+    getTeacherAverage,
+    getTeacherComments,
   } = require("../models/userModel");
   
   // Manejador que muestra un listado de todos los profesores HABILITADOS en la BD
@@ -129,6 +131,8 @@ const teacherInfo = async (req, res) => {
   try {
     const id_teacher = req.params.id;
     const [teacher] = await getTeacherById(id_teacher);
+    const [teacherAVG] = await getTeacherAverage(id_teacher);
+    const [teacherComments] = await getTeacherComments(id_teacher);
 
     //Verifica si el identificador dado corresponde a un profesor
     if (!teacher[0]) {
@@ -139,6 +143,8 @@ const teacherInfo = async (req, res) => {
 
     res.send({
       teacher,
+      teacherAVG,
+      teacherComments
     });
 
   } catch (error) {
