@@ -93,11 +93,11 @@ const getMyStudent = (id_teacher, id_student) => {
 }
 
 const getMyTeacher = (id_student, id_teacher) => {
-    return db.query('SELECT u.*, ts.score, ts.comments FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]); // Ajusrta este metodo para 2 tablas AND u.status = 1
+    return db.query('SELECT u.*, ts.score, ts.comments FROM users as u JOIN teachers_students as ts ON ts.id_teacher = u.id_user WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
 }
 
 const getTeachersAvailables = () => {
-    return db.query("SELECT u.*, AVG(ts.score) as average FROM users as u JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE u.rol = 'profesor' AND u.status = 1 AND u.active = 1 GROUP BY u.id_user");
+    return db.query("SELECT u.*, AVG(ts.score) as average FROM users as u LEFT JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE u.rol = 'profesor' AND u.status = 1 AND u.active = 1 GROUP BY u.id_user");
 }
 
 // const getTeachersAvailables = () => {
