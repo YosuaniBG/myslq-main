@@ -101,7 +101,7 @@ const getTeachersAvailables = () => {
 }
 
 const getRelationshipStatus = (id_student, id_teacher) => {
-    return db.query('SELECT ts.status FROM teachers_students as ts WHERE WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
+    return db.query('SELECT ts.status FROM teachers_students as ts WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
 }
 
 const getMessages = (id_teacher, id_student) => {
