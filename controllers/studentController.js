@@ -1,4 +1,3 @@
-
 const {
   getMessages,
   insertMessage,
@@ -9,7 +8,8 @@ const {
   getTeacherById,
   getMyTeacher,
   getAllMyTeachersActive,
-  getAllMyTeachersPending
+  getAllMyTeachersPending,
+  getRelationshipStatus,
 } = require("../models/userModel");
 
 // Manejador para obtener los datos del usuario registrado y sus profesores
@@ -33,9 +33,8 @@ const studentDashboard = async (req, res) => {
     res.send({
       student: req.user,
       teachersActive: active,
-      teachersPending: pending
+      teachersPending: pending,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -61,7 +60,6 @@ const myTeacher = async (req, res) => {
       teacher,
       chat,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -69,17 +67,17 @@ const myTeacher = async (req, res) => {
   }
 };
 
-// Manejador para enviar mensajes a un profesor que este previamente contratado con el estudiante loggeado 
+// Manejador para enviar mensajes a un profesor que este previamente contratado con el estudiante loggeado
 const sendMessage = (sender) => {
   return async (req, res) => {
     try {
       const sender_user = req.user.id_user;
       const receiver_user = req.params.id;
       const message = req.body.message;
-  
+
       const [teacher] = await getTeacherById(receiver_user);
-  
-       //Verifica que el id proporcionado corresponda a un profesor
+
+      //Verifica que el id proporcionado corresponda a un profesor
       if (!teacher[0]) {
         return res.status(404).send({
           msg: "No es posible establecer comunicación entre estos dos usuarios",
@@ -89,7 +87,7 @@ const sendMessage = (sender) => {
       const [userData] = await getRelationship(receiver_user, sender_user);
 
       //Verifica que la relacion entre estos dos ususario EXISTA
-      if(!userData[0]){
+      if (!userData[0]) {
         return res.status(404).json({
           msg: "Esta relacion Alumno - Profesor no existe",
         });
@@ -103,22 +101,31 @@ const sendMessage = (sender) => {
       }
 
       let result;
-      if(sender === 'alumno')
-         result = await insertMessage(receiver_user, sender_user, sender, message);
+      if (sender === "alumno")
+        result = await insertMessage(
+          receiver_user,
+          sender_user,
+          sender,
+          message
+        );
       else
-        result = await insertMessage(sender_user, receiver_user, sender, message);
-  
+        result = await insertMessage(
+          sender_user,
+          receiver_user,
+          sender,
+          message
+        );
+
       res.send({
-        msg: 'Mensaje enviado',
+        msg: "Mensaje enviado",
       });
-  
     } catch (error) {
       res.status(500).json({
         msg: error.message,
       });
     }
   };
-}
+};
 
 // Manejador para atualizar los datos del estudiante
 const updateStudentInfo = async (req, res) => {
@@ -126,10 +133,9 @@ const updateStudentInfo = async (req, res) => {
     const [data] = await updateStudent(req.user.id_user, req.body);
 
     res.send({
-      msg: 'Actualización satisfactoria',
+      msg: "Actualización satisfactoria",
       userUpdated: data,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
@@ -154,10 +160,32 @@ const contactTeacher = async (req, res) => {
     const [data] = await insertRelationship(id_teacher, id_student);
 
     res.send({
-      contact:
-        "Se ha establecido contacto con este profesor, espere a que su solicitud sea aceptada por el profesor...",
+      msg: "Se ha establecido contacto con este profesor, espere a que su solicitud sea aceptada por el profesor...",
       data: data,
     });
+  } catch (error) {
+    res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
+
+// Manejador para indicar el STATUS de la relacion Alumno - profesor al establecer contacto con el profesor
+const relationshipStatus = async (req, res) => {
+  try {
+    const id_student = req.user.id_user;
+    const id_teacher = req.params.id;
+    const [data] = await getRelationshipStatus(id_student, id_teacher);
+
+    if (!data[0]) {
+      res.send({
+        status: -1,
+      });
+    } else {
+      res.send({
+        status: data[0],
+      });
+    }
 
   } catch (error) {
     res.status(500).json({
@@ -199,20 +227,23 @@ const ratingAndCommenting = async (req, res) => {
       });
     }
 
-    const [data] = await updateRelationship(id_teacher, id_student, score, comment);
+    const [data] = await updateRelationship(
+      id_teacher,
+      id_student,
+      score,
+      comment
+    );
 
     res.send({
-      msg: 'Su información ha sido enviada',
+      msg: "Su información ha sido enviada",
       comment: data,
     });
-
   } catch (error) {
     res.status(500).json({
       msg: error.message,
     });
   }
 };
-
 
 module.exports = {
   studentDashboard,
@@ -221,4 +252,5 @@ module.exports = {
   updateStudentInfo,
   contactTeacher,
   ratingAndCommenting,
+  relationshipStatus
 };

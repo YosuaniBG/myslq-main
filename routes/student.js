@@ -6,6 +6,7 @@ const {
   updateStudentInfo,
   contactTeacher,
   ratingAndCommenting,
+  relationshipStatus,
 } = require("../controllers/studentController");
 const { managePassword } = require("../controllers/adminController");
 const { validarCampos } = require("../validators/validateField");
@@ -21,11 +22,14 @@ router.get("/dashboard", studentDashboard);
 // Ruta que Devuelve un  OBJETO con los datos de un profesor y una lista con sus conversaciones
 router.get("/dashboard/my_teacher/:id", myTeacher); 
 
+// Ruta para indicar el STATUS entre un estudiante y un profesor
+router.get("/dashboard/teachers/:id/relationship_status", relationshipStatus);
+
 // Ruta que Envia un mensaje al Profesor
 router.post("/dashboard/teachers/:id/message", sendMessage("alumno")); 
 
- // Ruta para establecer la relacion inicil entre un estudiante y un profesor
- router.post("/dashboard/teachers/:id/contact", contactTeacher);
+// Ruta para establecer la relacion inicil entre un estudiante y un profesor
+router.post("/dashboard/teachers/:id/contact", contactTeacher);
 
 // Ruta para Actualizar datos de un Alumno
 router.put("/dashboard/change_profile", [

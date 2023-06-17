@@ -100,9 +100,9 @@ const getTeachersAvailables = () => {
     return db.query("SELECT u.*, AVG(ts.score) as average FROM users as u LEFT JOIN teachers_students as ts ON u.id_user = ts.id_teacher WHERE u.rol = 'profesor' AND u.status = 1 AND u.active = 1 GROUP BY u.id_user");
 }
 
-// const getTeachersAvailables = () => {
-//     return db.query("SELECT * FROM users WHERE rol = 'profesor' AND status = 1 AND active = 1");
-// }
+const getRelationshipStatus = (id_student, id_teacher) => {
+    return db.query('SELECT ts.status FROM teachers_students as ts WHERE WHERE ts.id_teacher = ? AND ts.id_student = ?', [id_teacher, id_student]);
+}
 
 const getMessages = (id_teacher, id_student) => {
     return db.query('SELECT * FROM messages WHERE id_teacher = ? AND id_student = ?', [id_teacher, id_student]);
@@ -165,6 +165,7 @@ module.exports = {
     getTeachersAvailables,
     getMessages,
     getRelationship,
+    getRelationshipStatus,
     teachersBySubject,
     teachersByPrice,
     teachersByExperience,
