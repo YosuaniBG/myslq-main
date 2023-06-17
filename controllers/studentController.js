@@ -183,7 +183,7 @@ const relationshipStatus = async (req, res) => {
       });
     } else {
       res.send({
-        status: data[0],
+        status: data[0].status
       });
     }
 
