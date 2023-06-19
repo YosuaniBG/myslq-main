@@ -124,9 +124,6 @@ const sendMessage = (sender) => {
 //Manejador para atualizar los datos del profesor
 const updateTeacherInfo = async (req, res) => {
   try {
-    // Se reciben dos ARRAYs los cuales se guardaran en la BD como cadenas de caracteres
-    // req.body.subjects = JSON.stringify(req.body.subjects);
-    // req.body.location = JSON.stringify(req.body.location);
     const [data] = await updateTeacher(req.user.id_user, req.body);
 
     res.send({

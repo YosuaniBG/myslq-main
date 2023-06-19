@@ -24,40 +24,7 @@ router.get("/dashboard/students/:id", myStudent);
 router.post("/dashboard/students/:id/message", sendMessage("profesor"));
 
 // Ruta para Actualizar datos de un Profesor
-router.put("/dashboard/change_profile", updateTeacherInfo); // Sin validacion de campos
-// router.put("/dashboard/change_profile",
-//   [
-//     body("username")
-//       .notEmpty().withMessage("Debe incluir el Username"),
-//     body("fullname")
-//       .notEmpty().withMessage("Debe incluir el nombre completo"),
-//     body("email")
-//       .isEmail().withMessage("Debe incluir el email / email no válido"),
-//     body("image?")
-//       .optional().isString().withMessage("Debe incluir una imagen de perfil a traves de un URL"),
-//     body("phone")
-//       .notEmpty().withMessage("Debe incluir su numero de telefono")
-//       .isMobilePhone().withMessage('El número de teléfono no es válido'),
-//     body("location")
-//       .notEmpty().withMessage("Debe incluir su ubicación")
-//       .matches(/^\[.*\]$/).withMessage('El campo debe comenzar con "[" y terminar con "]"'),
-//     body("subjects")
-//       .notEmpty().withMessage("Debe seleccionar las materias que impartirá")
-//       .matches(/^\[.*\]$/).withMessage('El campo debe comenzar con "[" y terminar con "]"'),
-//     body("description")
-//       .notEmpty().withMessage("Debe incluir una descripción de usted"),
-//     body("brief_description")
-//       .notEmpty().withMessage("Debe incluir un resumen descriptivo"),
-//     body("price")
-//       .notEmpty().withMessage("Debe incluir el precio que cobra por hora")
-//       .isFloat().withMessage("El valor proporcionado es incorrecto"),
-//     body("experience")
-//       .notEmpty().withMessage("Debe incluir sus años de experiencia")
-//       .isInt().withMessage("El valor proporcionado es incorrecto"),
-//   ],
-//   validarCampos, updateTeacherInfo); 
-
-// Ruta para gestionar Contraseña
+router.put("/dashboard/change_profile", updateTeacherInfo); 
 
 router.put("/dashboard/change_password",
 [

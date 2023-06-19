@@ -2,7 +2,6 @@ const express = require("express");
 const {
   OneAdmin,
   AllUsersByRole,
-  newAdmin,
   updateAdminData,
   updateAdminInfo,
   switchStatus,

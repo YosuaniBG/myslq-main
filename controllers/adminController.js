@@ -1,5 +1,5 @@
 const bcryptjs = require('bcryptjs');
-const { getUsers, updateAdmin, updateUserStatus, getUserById, insertAdmin, updatePassword, admission } = require("../models/userModel");
+const { getUsers, updateAdmin, updateUserStatus, getUserById, updatePassword, admission } = require("../models/userModel");
 const { registrarUser } = require('../models/authModel');
 
 
@@ -48,6 +48,7 @@ const OneAdmin = async (req, res) => {
   }
 };
 
+// Manejador para obtener la informacion de un USUARIO
 const userInfo = async (req, res) => {
   try {
     const [data] = await getUserById(req.params.id);
@@ -113,6 +114,7 @@ const newUser = async (req, res) => {
   }
 };
 
+// Manejador para actualizar la informacion del ADMINISTRADOR
 const updateAdminInfo = async (req, res) => {
   try {
     const [data] = await updateAdmin(req.user.id_user, req.body);
@@ -160,8 +162,7 @@ const updateAdminData = async (req, res) => {
   }
 };
 
-// Manejador para gestionar la contraseña del administrador loggeado
-// Manejador común
+// Manejador para gestionar la contraseña del administrador loggeado (Manejador común)
 const managePassword = async (req, res) => {
   try {
     const [userlogged] = await getUserById(req.user.id_user)
